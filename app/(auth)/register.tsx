@@ -1,22 +1,25 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
 import { SocialButton } from '@/components/loginForm/SocialButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
-import { FormDataLogin, schemaLogin } from '@/interfaces/AuthDTO';
+import { FormDataRegister, schemaRegister } from '@/interfaces/AuthDTO';
 
 
 
-export default function Login() {
-  const { login } = useAuth();
-  const { control, handleSubmit, formState: { errors } } = useForm<FormDataLogin>({
-    resolver: yupResolver(schemaLogin)
+
+
+export default function Register() {
+  const { register } = useAuth();
+  const { control, handleSubmit, formState: { errors } } = useForm<FormDataRegister>({
+    resolver: yupResolver(schemaRegister)
   });
 
-  const onSubmit = async (data: FormDataLogin) => {
+  const onSubmit = async (data: FormDataRegister) => {
     try {
-      await login(data.email, data.password);
+      await register(data.email, data.password);
     } catch (error) {
       console.error(error);
     }

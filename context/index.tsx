@@ -10,6 +10,7 @@ type AuthContextData = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -18,12 +19,21 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
  const router = useRouter();
+
   const login = async (email: string, password: string) => {
     try {
       
       setUser({ id: '1', email }); // Exemplo simplificado
     } catch (error) {
       throw new Error('Erro ao fazer login');
+    }
+  };
+
+  const register = async (email: string, password: string) => {
+    try {
+      setUser({ id: '1', email }); // Exemplo simplificado
+    } catch (error) {
+      throw new Error('Erro ao registrar');
     }
   };
 
@@ -45,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user, 
         isAuthenticated: !!user,
         login,
+        register,
         logout 
       }}
     >
