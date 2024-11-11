@@ -7,6 +7,7 @@ import 'react-native-reanimated';
 import "../constants/global.css";
 import { AuthProvider } from '@/context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StatusBar } from 'react-native';
 
 export {
   ErrorBoundary,
@@ -41,6 +42,8 @@ function RootLayoutNav() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      
+    <StatusBar backgroundColor='transparent' translucent barStyle='dark-content' />
     <AuthProvider>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />

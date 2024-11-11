@@ -2,6 +2,7 @@ import { View, Text } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { FontAwesome } from '@expo/vector-icons';
 import { Controller } from 'react-hook-form';
+import { useState } from 'react';
 
 type FormInputProps = {
   control: any;
@@ -22,6 +23,7 @@ export function FormInput({
   keyboardType = 'default',
   placeholder
 }: FormInputProps) {
+  const [focused, setFocused] = useState(false);
   return (
     <View className="flex flex-col space-y-1 mb-4">
       <View className="relative flex-row items-center">
@@ -41,17 +43,29 @@ export function FormInput({
             placeholder={placeholder}
             secureTextEntry={secureTextEntry}
             keyboardType={keyboardType}
-            style={{ paddingLeft: 45 }}
-            className="bg-gray-50 border border-gray-200 rounded-lg py-3 w-full text-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            style={{
+              backgroundColor: '#F9FAFB',
+              borderWidth: 1,
+              borderColor: (focused && !error) ? '#E5E7EB' : (!focused && error) ? '#EA4335' : '#E5E7EB',
+              borderRadius: 8,
+              paddingVertical: 12,
+              width: '100%',
+              color: '#374151',
+              paddingLeft: 45
+            }}
+            onPressIn={() => {
+              setFocused(true);
+            }}
+            onPressOut={() => {
+              setFocused(false);
+            }}
             placeholderTextColor="#9CA3AF"
               accessibilityLabel={placeholder}
             />
           )}
         />
       </View>
-      {error && (
-        <Text style={{ color: '#EA4335' }}>{error}</Text>
-      )}
+     
     </View>
  
  
