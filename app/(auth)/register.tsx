@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
 import { FormDataRegister, schemaRegister } from '@/interfaces/AuthDTO';
+import { useRouter } from 'expo-router';
 
 
 
@@ -13,6 +14,8 @@ import { FormDataRegister, schemaRegister } from '@/interfaces/AuthDTO';
 
 export default function Register() {
   const { register } = useAuth();
+  const router = useRouter();
+  router.canGoBack();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataRegister>({
     resolver: yupResolver(schemaRegister)
   });
@@ -30,10 +33,10 @@ export default function Register() {
       {/* Cabeçalho */}
       <View className="mb-12">
         <Text className="text-3xl font-bold text-gray-800 mb-2">
-          Bem-vindo de volta
+          Crie sua conta
         </Text>
         <Text className="text-gray-600 text-base">
-          Entre com suas credenciais para acessar
+          Crie sua conta para continuar
         </Text>
       </View>
 
@@ -52,6 +55,19 @@ export default function Register() {
               placeholder="Seu email"
             />
         </View>
+        <View>
+          <Text className="text-gray-700 text-sm mb-2 font-medium">
+            Nome de usuário
+          </Text>
+            <FormInput
+              control={control}
+              name="username"
+              icon="user"
+              placeholder="Seu nome de usuário"
+              error={errors.username?.message}
+            />
+        </View>
+
   
         <View>
           <Text className="text-gray-700 text-sm mb-2 font-medium">
@@ -74,29 +90,21 @@ export default function Register() {
             accessibilityLabel="Criar nova conta"
           >
             <Text className="text-gray-600 text-base hover:text-blue-700">
-              Criar conta
+              Já tens uma conta ? Acesse
             </Text>
           </TouchableOpacity>
           
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Recuperar senha"
-          >
-            <Text className="text-gray-600 text-base hover:text-blue-700">
-              Esqueceu a senha?
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Botão de login */}
         <TouchableOpacity
           className="bg-[#FF7F50] py-3 rounded-lg hover:bg-blue-700 active:bg-blue-800"
           accessibilityRole="button"
-          accessibilityLabel="Entrar na conta"
+          accessibilityLabel="Criar conta"
           onPress={handleSubmit(onSubmit)}
         >
           <Text className="text-white text-center font-semibold text-xl">
-            Entrar
+            Criar conta
           </Text>
         </TouchableOpacity>
 

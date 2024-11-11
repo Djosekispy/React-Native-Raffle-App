@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
 import { FormDataLogin, schemaLogin } from '@/interfaces/AuthDTO';
-
+import { Link } from 'expo-router';
 
 
 export default function Login() {
@@ -35,7 +35,7 @@ export default function Login() {
       </View>
 
       {/* Formulário */}
-      <View className="space-y-4">
+      <View className="space-y-4 w-full">
         <View>
           <Text className="text-gray-700 text-sm mb-2 font-medium">
             Email
@@ -66,28 +66,36 @@ export default function Login() {
 
         {/* Links auxiliares */}
         <View className="flex-row justify-between items-center my-4">
-          <TouchableOpacity 
-            accessibilityRole="button"
-            accessibilityLabel="Criar nova conta"
-          >
-            <Text className="text-gray-600 text-base hover:text-blue-700">
-              Criar conta
-            </Text>
-          </TouchableOpacity>
+        
+            <TouchableOpacity 
+              accessibilityRole="button"
+              accessibilityLabel="Criar nova conta"
+            >
+                <Link href="/register" asChild>
+              <Text className="text-gray-600 text-base hover:text-blue-700">
+                Criar nova conta
+              </Text>
+              </Link>
+            </TouchableOpacity>
           
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Recuperar senha"
-          >
-            <Text className="text-gray-600 text-base hover:text-blue-700">
-              Esqueceu a senha?
-            </Text>
-          </TouchableOpacity>
+
+         
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Recuperar senha"
+            >
+               <Link href="/register" asChild>
+              <Text className="text-gray-600 text-base hover:text-blue-700">
+                Esqueceu a senha?
+              </Text>
+              </Link>
+            </TouchableOpacity>
+         
         </View>
 
         {/* Botão de login */}
         <TouchableOpacity
-          className="bg-[#FF7F50] py-3 rounded-lg hover:bg-blue-700 active:bg-blue-800"
+          className="bg-[#FF7F50] py-3 mt-4 rounded-lg hover:bg-blue-700 active:bg-blue-800"
           accessibilityRole="button"
           accessibilityLabel="Entrar na conta"
           onPress={handleSubmit(onSubmit)}

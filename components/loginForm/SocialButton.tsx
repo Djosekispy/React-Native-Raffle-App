@@ -11,12 +11,12 @@ type SocialButtonProps = {
 export function SocialButton({ icon, label, color, onPress }: SocialButtonProps) {
   return (
     <TouchableOpacity
-    className="flex-1 flex-row items-center justify-center py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+    className="flex-1 flex-row items-center gap-2 justify-center py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
     accessibilityRole="button"
     accessibilityLabel="Entrar com Google"
   >
     <FontAwesome name={icon} size={20} color={color} />
-    <Text className="ml-2 font-medium text-gray-700">{label}</Text>
+    <Text className="ml-4 font-medium text-gray-700">{label}</Text>
   </TouchableOpacity>
   );
 }
