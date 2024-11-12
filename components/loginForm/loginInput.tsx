@@ -24,6 +24,7 @@ export function FormInput({
   placeholder
 }: FormInputProps) {
   const [focused, setFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <View className="flex flex-col space-y-1 mb-4">
       <View className="relative flex-row items-center">
@@ -41,7 +42,7 @@ export function FormInput({
             value={value}
             onChangeText={onChange}
             placeholder={placeholder}
-            secureTextEntry={secureTextEntry}
+            secureTextEntry={showPassword ? false : secureTextEntry}
             keyboardType={keyboardType}
             style={{
               backgroundColor: '#F9FAFB',
@@ -65,7 +66,33 @@ export function FormInput({
           )}
         />
       </View>
-     
+    {
+        error ? <FontAwesome name="exclamation-triangle" size={25} color="#EA4335" style={{ position: 'absolute', right: 9, top: 12, zIndex: 1 }} /> : null
+    }
+
+    {
+      (focused && !error) ? (secureTextEntry && <FontAwesome 
+        name={showPassword ? "eye" : "eye-slash"}
+        onPress={() => {
+          setShowPassword(!showPassword);
+        }}
+        size={25} 
+        color="#6B7280"
+        style={{ position: 'absolute', right: 9, top: 12, zIndex: 1 }}
+      />) : (!focused && error)  ? (
+        <FontAwesome name="exclamation-triangle" size={25} color="#EA4335" style={{ position: 'absolute', right: 9, top: 12, zIndex: 1 }} />
+      ) : (secureTextEntry && <FontAwesome 
+        name={showPassword ? "eye" : "eye-slash"}
+        onPress={() => {
+          setShowPassword(!showPassword);
+        }}
+        size={25} 
+        color="#6B7280"
+          style={{ position: 'absolute', right: 9, top: 12, zIndex: 1 }}
+        />)
+    }
+
+    
     </View>
  
  

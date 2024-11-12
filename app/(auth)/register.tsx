@@ -7,6 +7,7 @@ import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
 import { FormDataRegister, schemaRegister } from '@/interfaces/AuthDTO';
 import { useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 
 
 
@@ -29,21 +30,20 @@ export default function Register() {
   };
 
   return (
-    <View className="flex-1 bg-white items-center justify-center px-6 py-8">
+    <View className="flex-1 bg-white items-center justify-center px-6 py-8 gap-4">
       {/* Cabeçalho */}
-      <View className="mb-12">
+      <View className="mb-4 justify-center items-center">
         <Text className="text-3xl font-bold text-gray-800 mb-2">
           Crie sua conta
         </Text>
-        <Text className="text-gray-600 text-base">
-          Crie sua conta para continuar
+        <Text className="text-gray-600 text-base text-center">
+          Participe de sorteios incríveis e concorra a prêmios exclusivos! Crie sua conta agora mesmo.
         </Text>
       </View>
-
       {/* Formulário */}
       <View className="space-y-4">
         <View>
-          <Text className="text-gray-700 text-sm mb-2 font-medium">
+          <Text className="text-gray-700 text-sm my-4 font-medium">
             Email
           </Text>
        
@@ -56,7 +56,7 @@ export default function Register() {
             />
         </View>
         <View>
-          <Text className="text-gray-700 text-sm mb-2 font-medium">
+          <Text className="text-gray-700 text-sm my-4 font-medium">
             Nome de usuário
           </Text>
             <FormInput
@@ -70,7 +70,7 @@ export default function Register() {
 
   
         <View>
-          <Text className="text-gray-700 text-sm mb-2 font-medium">
+          <Text className="text-gray-700 text-sm my-4 font-medium">
             Senha
           </Text>
             <FormInput
@@ -84,14 +84,18 @@ export default function Register() {
         </View>
 
         {/* Links auxiliares */}
-        <View className="flex-row justify-between items-center my-4">
+        <View className="flex-row justify-between items-center mb-4">
           <TouchableOpacity 
             accessibilityRole="button"
             accessibilityLabel="Criar nova conta"
           >
-            <Text className="text-gray-600 text-base hover:text-blue-700">
-              Já tens uma conta ? Acesse
-            </Text>
+            
+              <Link href="/login" asChild>
+              <Text className="text-gray-600 text-base hover:text-blue-700">
+              Já tenho uma conta
+              </Text>
+              </Link>
+           
           </TouchableOpacity>
           
         </View>

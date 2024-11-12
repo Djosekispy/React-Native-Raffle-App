@@ -25,19 +25,19 @@ export default function Login() {
   return (
     <View className="flex-1 bg-white items-center justify-center px-6 py-8">
       {/* Cabeçalho */}
-      <View className="mb-12">
+      <View className="mb-12 justify-center items-center">
         <Text className="text-3xl font-bold text-gray-800 mb-2">
           Bem-vindo de volta
         </Text>
-        <Text className="text-gray-600 text-base">
-          Entre com suas credenciais para acessar
+        <Text className="text-gray-600 text-base text-center">
+          Entre com suas credenciais para acessar sua conta e participar dos nossos sorteios exclusivos
         </Text>
       </View>
 
       {/* Formulário */}
       <View className="space-y-4 w-full">
         <View>
-          <Text className="text-gray-700 text-sm mb-2 font-medium">
+          <Text className="text-gray-700 text-sm my-4 font-medium">
             Email
           </Text>
        
@@ -51,7 +51,7 @@ export default function Login() {
         </View>
   
         <View>
-          <Text className="text-gray-700 text-sm mb-2 font-medium">
+          <Text className="text-gray-700 text-sm my-4 font-medium">
             Senha
           </Text>
             <FormInput
