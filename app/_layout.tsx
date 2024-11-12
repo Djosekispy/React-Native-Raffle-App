@@ -8,6 +8,7 @@ import "../constants/global.css";
 import { AuthProvider } from '@/context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
+import '@/constants/global.css';
 
 export {
   ErrorBoundary,
