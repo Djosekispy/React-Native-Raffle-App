@@ -5,12 +5,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
 import { FormDataLogin, schemaLogin } from '@/interfaces/AuthDTO';
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 
 
 export default function Login() {
   const { login } = useAuth();
+  const { email, password } = useLocalSearchParams<{ email: string, password: string }>();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataLogin>({
+    defaultValues: {
+      email: email || '',
+      password: password || ''
+    },
     resolver: yupResolver(schemaLogin)
   });
 
@@ -84,7 +89,7 @@ export default function Login() {
               accessibilityRole="button"
               accessibilityLabel="Recuperar senha"
             >
-               <Link href="/register" asChild>
+               <Link href='/forget-password' asChild>
               <Text className="text-gray-600 text-base hover:text-blue-700">
                 Esqueceu a senha?
               </Text>

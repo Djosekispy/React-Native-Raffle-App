@@ -10,7 +10,7 @@ type FormInputProps = {
   icon: any;
   error?: string;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address';
+  keyboardType?: 'default' | 'email-address' | 'numeric';
   placeholder: string;
 };
 
