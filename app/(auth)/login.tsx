@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
-import { FormDataLogin, schemaLogin } from '@/interfaces/AuthDTO';
+import { FormDataLogin, schemaLogin } from '@/interfaces/IAuth';
 import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 

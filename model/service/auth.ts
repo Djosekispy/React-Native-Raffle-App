@@ -9,7 +9,6 @@ class AuthService {
     constructor(private userRepository: UserRepositoryInterface) {}
 
     login = async (email: string, senha: string): Promise<User | null | { error: string }> => {
-        console.log('chegou no login service');
         try {
             const cleanData = await this.cleanInput(email, senha);
             if ('error' in cleanData) {
@@ -66,7 +65,13 @@ class AuthService {
     register = async (data: User): Promise<User | null | { error: string }> => {
         try {
             const cleanData = await this.cleanInput(data.email, data.senha);
-            const request = await api.post('/register', cleanData);
+            const cleanDataRegister = {
+                email: Object.values(cleanData)[0],
+                senha: Object.values(cleanData)[1],
+                nome_completo: data.nome_completo,
+                telefone: data.telefone
+            }
+            const request = await api.post('/auth/register', cleanDataRegister);
             const save = await this.userRepository.create(request.data?.user);
             if (!save.success) {
                 return { error: save.error as string };

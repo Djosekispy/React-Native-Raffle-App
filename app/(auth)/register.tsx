@@ -5,9 +5,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { useAuth } from '@/context';
-import { FormDataRegister, schemaRegister } from '@/interfaces/AuthDTO';
+import { FormDataRegister, schemaRegister } from '@/interfaces/IAuth';
 import { useRouter } from 'expo-router';
 import { Link } from 'expo-router';
+import { ActivityIndicator } from 'react-native';
 
 
 
@@ -16,34 +17,61 @@ import { Link } from 'expo-router';
 export default function Register() {
   const { register } = useAuth();
   const router = useRouter();
-  router.canGoBack();
+  const [isError, setIsError] = useState('');
+   const [ isLoading, setIsLoading ] = useState(false);
+  const canGoBack = router.canGoBack();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataRegister>({
     resolver: yupResolver(schemaRegister)
   });
 
   const onSubmit = async (data: FormDataRegister) => {
+    setIsLoading(true);
     try {
-      await register(data.email, data.password);
+     const user = await register(data.email, data.password, data.username, '00008999999');
+      if('error' in user){
+        setIsError(user.error);
+      }else{
+        router.replace({pathname: '/login', params: {email: data.email, password: data.password}});
+      }
     } catch (error) {
       console.error(error);
+    }finally{
+      setIsLoading(false);
     }
   };
 
   return (
-    <View className="flex-1 bg-white items-center justify-center px-6 py-8 gap-4">
+      <View className="flex-1 bg-white items-center justify-center px-6 py-8 gap-4">
       {/* Cabeçalho */}
       <View className="mb-4 justify-center items-center">
         <Text className="text-3xl font-bold text-gray-800 mb-2">
           Crie sua conta
         </Text>
-        <Text className="text-gray-600 text-base text-center">
-          Participe de sorteios incríveis e concorra a prêmios exclusivos! Crie sua conta agora mesmo.
-        </Text>
+       
       </View>
       {/* Formulário */}
       <View className="space-y-4">
+      {isError && (
+         <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
+           <Text className="text-red-700 font-medium">
+             {isError}
+           </Text>
+         </View>
+       )}
+      <View>
+          <Text className="text-gray-700 text-sm mb-4 font-medium">
+            Nome de usuário
+          </Text>
+            <FormInput
+              control={control}
+              name="username"
+              icon="user"
+              placeholder="Seu nome de usuário"
+              error={errors.username?.message}
+            />
+        </View>
         <View>
-          <Text className="text-gray-700 text-sm my-4 font-medium">
+          <Text className="text-gray-700 text-sm mb-4 font-medium">
             Email
           </Text>
        
@@ -56,21 +84,7 @@ export default function Register() {
             />
         </View>
         <View>
-          <Text className="text-gray-700 text-sm my-4 font-medium">
-            Nome de usuário
-          </Text>
-            <FormInput
-              control={control}
-              name="username"
-              icon="user"
-              placeholder="Seu nome de usuário"
-              error={errors.username?.message}
-            />
-        </View>
-
-  
-        <View>
-          <Text className="text-gray-700 text-sm my-4 font-medium">
+          <Text className="text-gray-700 text-sm mb-4 font-medium">
             Senha
           </Text>
             <FormInput
@@ -107,9 +121,9 @@ export default function Register() {
           accessibilityLabel="Criar conta"
           onPress={handleSubmit(onSubmit)}
         >
-          <Text className="text-white text-center font-semibold text-xl">
+       {isLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white text-center font-semibold text-xl">
             Criar conta
-          </Text>
+          </Text>}
         </TouchableOpacity>
 
         {/* Divisor */}

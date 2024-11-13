@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const login = async (email: string, password: string) : Promise<User | { error : string }> => {
-    console.log('chegou no login');
     try {
       const user = await authService.login(email, password);
      
@@ -30,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(user as User);
       return user as User;
     } catch (error) {
-      return {error : 'Erro: ' + error };
+      return {error : 'Erro ao logar: ' + error };
     }
   };
 
