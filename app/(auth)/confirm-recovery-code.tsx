@@ -4,6 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import * as yup from 'yup';
+import { useState } from 'react';
+import { authService } from '@/model/service/auth';
 
 const schemaConfirmCode = yup.object({
   code: yup.string()
@@ -18,17 +20,39 @@ type FormDataConfirmCode = {
 
 export default function ConfirmRecoveryCode() {
   const router = useRouter();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, code } = useLocalSearchParams<{ email: string, code: string }>();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataConfirmCode>({
     resolver: yupResolver(schemaConfirmCode)
   });
-
+  const [isError, setIsError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const onSubmit = async (data: FormDataConfirmCode) => {
+    setIsLoading(true);
+    setIsError('');
     try {
-      // Implementar verificação do código
-     router.push({pathname: "/reset-password", params: {email: email}});
+      if(data.code === code){
+        router.push({pathname: "/reset-password", params: {email: email}});
+      }else{
+        setIsError('Código inválido');
+      }
     } catch (error) {
       console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  };
+  const resendCode = async () => {
+    setIsLoading(true);
+    setIsError('');
+    try {
+      const user = await authService.forgotPassword(email);
+      if('error' in user){
+        setIsError(user.error);
+      }
+    } catch (error) {
+      console.error(error);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -46,6 +70,13 @@ export default function ConfirmRecoveryCode() {
 
       {/* Formulário */}
       <View className="w-full space-y-4">
+      {isError && (
+         <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
+           <Text className="text-red-700 font-medium">
+             {isError}
+           </Text>
+         </View>
+       )}
         <View>
           <Text className="text-gray-700 text-sm mb-2 font-medium">
             Código de verificação
@@ -75,7 +106,7 @@ export default function ConfirmRecoveryCode() {
         {/* Links auxiliares */}
         <View className="mt-6 flex-row justify-between">
           <Link href="/forget-password" asChild>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={resendCode}>
               <Text className="text-gray-600 text-base">
                 Reenviar código
               </Text>

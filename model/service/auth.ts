@@ -26,6 +26,7 @@ class AuthService {
                     return { error: save.error as string };
                 }
             }
+            api.defaults.headers.common['Authorization'] = `Bearer ${request.data?.token}`;
             return await this.getUser();
         } catch (error) {
             if (isAxiosError(error)) {
@@ -77,6 +78,30 @@ class AuthService {
                 return { error: save.error as string };
             }
             return await this.getUser();
+        } catch (error) {
+            if (isAxiosError(error)) {
+                return { error: error.response?.data.message };
+            } else {
+                return { error: error as string };
+            }
+        }
+    }
+    forgotPassword = async (email: string): Promise<User | { error: string }> => {
+        try {
+            const request = await api.post('/auth/forgot-password', { email });
+            return request.data.user;
+        } catch (error) {
+            if (isAxiosError(error)) {
+                return { error: error.response?.data.message };
+            } else {
+                return { error: error as string };
+            }
+        }
+    }
+    resetPassword = async (email: string, senha: string): Promise<User | { error: string }> => {
+        try {
+            const request = await api.post('/auth/reset-password', { email,senha });
+            return request.data.user;
         } catch (error) {
             if (isAxiosError(error)) {
                 return { error: error.response?.data.message };

@@ -1,9 +1,11 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { Link, useRouter } from 'expo-router';
 import * as yup from 'yup';
+import { authService } from '@/model/service/auth';
+import { useState } from 'react';
 
 const schemaForgetPassword = yup.object({
   email: yup.string().email('Email inválido').required('Email é obrigatório'),
@@ -15,18 +17,30 @@ type FormDataForgetPassword = {
 
 export default function ForgetPassword() {
     const router = useRouter();
+    const [isError, setIsError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataForgetPassword>({
     resolver: yupResolver(schemaForgetPassword)
   });
 
   const onSubmit = async (data: FormDataForgetPassword) => {
+    setIsLoading(true);
     try {
-      // Implementar lógica de recuperação de senha
-      router.push({pathname: '/confirm-recovery-code', params: {email: data.email}});
+      const user = await authService.forgotPassword(data.email);
+      console.log(JSON.stringify(user));
+      if('error' in user){
+        setIsError(user.error);
+      }else{
+        router.push({pathname: '/confirm-recovery-code', params: {email: data.email, code: user.codigo_recuperacao}});
+      }
     } catch (error) {
       console.error(error);
+    }finally{
+      setIsLoading(false);
     }
   };
+
+
 
   return (
     <View className="flex-1 bg-white items-center justify-center px-6 py-8">
@@ -42,6 +56,13 @@ export default function ForgetPassword() {
 
       {/* Formulário */}
       <View className="w-full space-y-4">
+      {isError && (
+         <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
+           <Text className="text-red-700 font-medium">
+             {isError}
+           </Text>
+         </View>
+       )}
         <View>
           <Text className="text-gray-700 text-sm mb-2 font-medium">
             Email
@@ -60,12 +81,13 @@ export default function ForgetPassword() {
         <TouchableOpacity
           className="bg-[#FF7F50] py-4 rounded-lg mt-4"
           accessibilityRole="button"
+          disabled={isLoading}
           accessibilityLabel="Enviar instruções"
           onPress={handleSubmit(onSubmit)}
         >
-          <Text className="text-white text-center font-semibold text-lg">
+        {isLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white text-center font-semibold text-lg">
             Enviar instruções
-          </Text>
+          </Text>}
         </TouchableOpacity>
 
         {/* Link para voltar */}

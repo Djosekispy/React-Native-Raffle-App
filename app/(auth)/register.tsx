@@ -118,6 +118,7 @@ export default function Register() {
         <TouchableOpacity
           className="bg-[#FF7F50] py-3 rounded-lg hover:bg-blue-700 active:bg-blue-800"
           accessibilityRole="button"
+          disabled={isLoading}
           accessibilityLabel="Criar conta"
           onPress={handleSubmit(onSubmit)}
         >

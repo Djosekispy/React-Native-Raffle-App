@@ -4,6 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormInput } from '@/components/loginForm/loginInput';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import * as yup from 'yup';
+import { authService } from '@/model/service/auth';
+import { useState } from 'react';
 
 const schemaResetPassword = yup.object({
   password: yup.string()
@@ -24,17 +26,26 @@ type FormDataResetPassword = {
 export default function ResetPassword() {
   const router = useRouter();
   const { email } = useLocalSearchParams<{ email: string }>();
+  const [isError, setIsError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataResetPassword>({
     resolver: yupResolver(schemaResetPassword)
   });
 
   const onSubmit = async (data: FormDataResetPassword) => {
+    setIsLoading(true);
+    setIsError('');
     try {
-      // Implementar lógica de redefinição de senha
-      console.log(data);
-      router.push({pathname: '/login', params: {email: email, password: data.password}});
+      const user = await authService.resetPassword(email, data.password);
+      if('error' in user){
+        setIsError(user.error);
+      }else{
+        router.push({pathname: '/login', params: {email: email, password: data.password}});
+      }
     } catch (error) {
       console.error(error);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -52,6 +63,13 @@ export default function ResetPassword() {
 
       {/* Formulário */}
       <View className="w-full space-y-4">
+      {isError && (
+         <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
+           <Text className="text-red-700 font-medium">
+             {isError}
+           </Text>
+         </View>
+       )}
         <View>
           <Text className="text-gray-700 text-sm mb-2 font-medium">
             Nova senha
