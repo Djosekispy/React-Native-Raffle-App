@@ -48,7 +48,7 @@ function RootLayoutNav() {
     <AuthProvider>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        <Stack.Screen name="(user)" options={{ headerShown: false }} />
       </Stack>
     </AuthProvider>
   </GestureHandlerRootView>
