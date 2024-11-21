@@ -1,4 +1,4 @@
-import { User } from "@/interfaces/user";
+import { User, UserSchema } from "@/interfaces/user";
 import UserRepositoryInterface from "../UserRepository/IUserRepository";
 import userRepository from "../UserRepository/userRepository";
 import { api } from "@/utils/api";
@@ -102,6 +102,27 @@ class AuthService {
         try {
             const request = await api.post('/auth/reset-password', { email,senha });
             return request.data.user;
+        } catch (error) {
+            if (isAxiosError(error)) {
+                return { error: error.response?.data.message };
+            } else {
+                return { error: error as string };
+            }
+        }
+    }
+
+    update = async (data:UserSchema) : Promise<User | null | { error: string }>=>{
+        try {
+            const request = await api.put('/users/me', data,{
+                headers: {
+                    Authorization : `Bearer ${data.token_acesso}`
+                }
+            });
+                const updateUser = await this.userRepository.update(request.data?.user);
+                if (!updateUser.success) {
+                    return { error: updateUser.error as string };
+                }
+            return await this.getUser();
         } catch (error) {
             if (isAxiosError(error)) {
                 return { error: error.response?.data.message };

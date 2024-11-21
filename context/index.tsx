@@ -1,4 +1,4 @@
-import { User } from '@/interfaces/user';
+import { User, UserSchema } from '@/interfaces/user';
 import { authService } from '@/model/service/auth';
 import { useRouter } from 'expo-router';
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
@@ -11,6 +11,7 @@ type AuthContextData = {
   login: (email: string, password: string) => Promise<User | { error : string }>;
   register: (email: string, password: string, nome_completo: string, telefone: string) => Promise<User | { error : string }>;
   logout: () => void;
+  updateUser : (data : UserSchema) => Promise<User | { error : string }>;
 };
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if(user && 'error' in user){
         return { error : user.error}
       }
-      setUser(user as User);
+     getUser();
       return user as User;
     } catch (error) {
       return {error : 'Erro ao logar: ' + error };
@@ -51,12 +52,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
    
   };
+   const getUser = async () => {
+    const user = await authService.getUser();
+    setUser(user);
+    return user;
+   };
 
-  useEffect(() => {
-    if (!user) {
-      router.replace('/login');
+  const updateUser = async(data : UserSchema):  Promise<User | { error : string }> =>{
+    try {
+      const user = await authService.update(data)
+     
+      if(user && 'error' in user){
+        return { error : user.error}
+      }
+    await  getUser();
+      return user as User;
+    } catch (error) {
+      return {error : 'Erro ao logar: ' + error };
     }
-  }, [user]);
+  }
+
+   useEffect(() => {
+    const checkUser = async () => {
+      const user = await getUser();
+      if (!user) {
+        router.replace('/login');
+      }
+    };
+    checkUser();
+   }, []);
 
 
   return (
@@ -66,7 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         login,
         register,
-        logout 
+        logout,
+        updateUser 
       }}
     >
       {children}

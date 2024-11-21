@@ -1,8 +1,13 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Drawer } from 'expo-router/drawer';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { Slot } from 'expo-router';
-
+import FooterTabs from '@/components/LayoutButton/tabs';
 export default function Layout() {
-  return <Slot/>;
+  return (
+    <>
+      <Slot/>
+      <View className='w-full p-4 m-2 bg-transparent'>
+      <FooterTabs/>
+      </View>
+    </>
+  );
 }
