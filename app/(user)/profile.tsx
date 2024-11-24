@@ -1,7 +1,7 @@
 import ProfileHeader from '@/components/userPage/ProfileHeader';
 import UserInfo from '@/components/userPage/UserInfo';
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, RefreshControl, SafeAreaView } from 'react-native';
 import Button from '@/components/userPage/Button';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/context';
@@ -11,9 +11,11 @@ import { User } from '@/interfaces/user';
 import { FormInput } from '@/components/loginForm/loginInput';
 import FormProfile from '@/components/userPage/formProfile';
 import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const ProfileScreen = () => {
-    const { user, logout } = useAuth();
+    const { user, logout,replaceLocalUseData } = useAuth();
+    const [refreshing, setRefreshing] = React.useState(false);
     const { sucess } = useLocalSearchParams<{sucess : string}>()
     const [ isError, setIsError ] = useState('');
     const { control, handleSubmit, formState: { errors } } = useForm<User>({
@@ -21,11 +23,24 @@ const ProfileScreen = () => {
        ...user
       },
     });
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(async () => {
+          await replaceLocalUseData()
+          setRefreshing(false);
+        }, 2000);
+      }, []);
   
     return (
-        <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false} alwaysBounceVertical>
+        <SafeAreaProvider>
+        <SafeAreaView style={{flex: 1}}>
+        <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false} alwaysBounceVertical
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
         <View className="flex-1 mx-4  pt-14">
-            <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
+            <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} onRefresh={onRefresh} />
             
                <View className='my-4'>
                {sucess && (
@@ -61,6 +76,8 @@ const ProfileScreen = () => {
             </Text>
         </View>
         </ScrollView>
+        </SafeAreaView>
+        </SafeAreaProvider>
     );
 };
 
