@@ -3,6 +3,7 @@ import UserRepositoryInterface from "../UserRepository/IUserRepository";
 import userRepository from "../UserRepository/userRepository";
 import { api } from "@/utils/api";
 import { isAxiosError } from "axios";
+import * as DocumentPicker from 'expo-document-picker';
 
 class AuthService {
 
@@ -127,6 +128,38 @@ class AuthService {
             if (isAxiosError(error)) {
                 return { error: error.response?.data.message };
             } else {
+                return { error: error as string };
+            }
+        }
+    }
+
+    
+    updateProfileImage = async (data:DocumentPicker.DocumentPickerAsset,token?: string) : Promise<User | null | { error: string }>=>{
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: data.uri,
+                type: data.mimeType,
+                name: data.name,
+            } as any)
+            const request = await api.put('/users/photo', formData,{
+                headers: {
+                 "Content-Type":"multipart/form-data",
+                    Authorization : `Bearer ${token}`
+                }
+            });
+                const updateUser = await this.userRepository.update(request.data?.user);
+                if (!updateUser.success) {
+                    console.log('update Repository',JSON.stringify(updateUser))
+                    return { error: updateUser.error as string };
+                }
+            return await this.getUser();
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.log('Catch Axios',JSON.stringify(error))
+                return { error: error.response?.data.message };
+            } else {
+                console.log('Catch normal',JSON.stringify(error))
                 return { error: error as string };
             }
         }

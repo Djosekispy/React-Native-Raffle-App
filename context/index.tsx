@@ -1,5 +1,6 @@
 import { User, UserSchema } from '@/interfaces/user';
 import { authService } from '@/model/service/auth';
+import { userService } from '@/model/service/user';
 import { useRouter } from 'expo-router';
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
@@ -11,6 +12,7 @@ type AuthContextData = {
   login: (email: string, password: string) => Promise<User | { error : string }>;
   register: (email: string, password: string, nome_completo: string, telefone: string) => Promise<User | { error : string }>;
   logout: () => void;
+  replaceLocalUseData : ()=> Promise<User | { error : string }>;
   updateUser : (data : UserSchema) => Promise<User | { error : string }>;
 };
 
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     const user = await authService.logout();
+    router.replace('/login');
     setUser(null);
    
   };
@@ -72,6 +75,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+const replaceLocalUseData = async():   Promise<User | { error : string }> =>{
+  try {
+    const user = await userService.updateLocalUserData();
+   
+    if(user && 'error' in user){
+      return { error : user.error}
+    }
+ const userdata = await  getUser();
+ return userdata as User;
+  } catch (error) {
+    return {error : 'Erro ao logar: ' + error };
+  }
+}
+
+
    useEffect(() => {
     const checkUser = async () => {
       const user = await getUser();
@@ -91,7 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
-        updateUser 
+        updateUser,
+        replaceLocalUseData 
       }}
     >
       {children}

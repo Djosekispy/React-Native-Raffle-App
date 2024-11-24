@@ -1,7 +1,7 @@
 import ProfileHeader from '@/components/userPage/ProfileHeader';
 import UserInfo from '@/components/userPage/UserInfo';
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Button from '@/components/userPage/Button';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/context';
@@ -10,9 +10,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { User } from '@/interfaces/user';
 import { FormInput } from '@/components/loginForm/loginInput';
 import FormProfile from '@/components/userPage/formProfile';
+import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 
 const ProfileScreen = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { sucess } = useLocalSearchParams<{sucess : string}>()
     const [ isError, setIsError ] = useState('');
     const { control, handleSubmit, formState: { errors } } = useForm<User>({
@@ -20,7 +21,7 @@ const ProfileScreen = () => {
        ...user
       },
     });
-
+  
     return (
         <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false} alwaysBounceVertical>
         <View className="flex-1 mx-4  pt-14">
@@ -46,6 +47,14 @@ const ProfileScreen = () => {
              </View>
         
         </View>
+        <TouchableOpacity
+          className="items-center justify-center my-4"
+          accessibilityRole="button"
+          accessibilityLabel="Entrar na conta"
+          onPress={logout}
+        >
+       <AntDesign name="logout" size={24} color="red" />
+        </TouchableOpacity>
         <View className="flex-1 items-center justify-center bg-gray-200 py-4">
             <Text className="text-gray-700 text-center">
                 © 2023 Todos os direitos reservados.
