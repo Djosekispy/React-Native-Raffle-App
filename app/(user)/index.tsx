@@ -1,16 +1,19 @@
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
 
 
 function Home(){
     return(
-        <View className="flex-1 items-center justify-center">
-            <Text className="text-2xl font-bold">Home</Text>
+        <SafeAreaView>
+        <View className="flex-1 items-start px-12">
+            <Text className="text-2xl font-bold">Sorteio App</Text>
+            <Text>Inscreva-te a vários sorteio e conquiste os seus sonhos</Text>
             <Link href='/(user)/profile'>
             <Text>Perfil</Text>
             </Link>
         </View>
+        </SafeAreaView>
     )
 }
 
