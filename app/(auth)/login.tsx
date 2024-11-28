@@ -24,6 +24,7 @@ export default function Login() {
 
   const onSubmit = async (data: FormDataLogin) => {
     setIsLoading(true);
+    setIsError('');
     try {
       const user = await login(data.email, data.password);
       if('error' in user){

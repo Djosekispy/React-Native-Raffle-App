@@ -26,7 +26,7 @@ export function FormInput({
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <View className="flex flex-col space-y-1 mb-4">
+    <View className="flex flex-col space-y-1">
       <View className="relative flex-row items-center">
         <FontAwesome 
           name={icon}

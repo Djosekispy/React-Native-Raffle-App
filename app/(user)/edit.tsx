@@ -12,6 +12,7 @@ import { User } from '@/interfaces/user';
 import { schemaUser } from '@/interfaces/user';
 import { UserSchema } from '@/interfaces/user';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 
 const EditProfileScreen = () => {
@@ -42,11 +43,15 @@ const EditProfileScreen = () => {
 
     return (
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} alwaysBounceVertical>
-            <View className="flex-1 mx-4 pt-14">
+          
+           <View className='p-4 mt-4 flex-row justify-evenly items-center'>
+        <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
+        <Text className='font-bold text-2xl text-black px-12 text-center my-4  py-2 rounded-2xl'>Atualizar dados pessoais</Text>
+      </View>
+    <View className="flex-1 mx-4">
                 <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
                 
                 <View className='my-4'>
-                    <Text className='font-bold text-xl text-white text-center my-4 bg-black py-2 rounded-2xl'>Atualizar Informações Pessoais</Text>
                     {isError && (
          <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
            <Text className="text-red-700 font-medium">

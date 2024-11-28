@@ -3,19 +3,20 @@ import UserInfo from '@/components/userPage/UserInfo';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, RefreshControl, SafeAreaView } from 'react-native';
 import Button from '@/components/userPage/Button';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/context';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { User } from '@/interfaces/user';
 import { FormInput } from '@/components/loginForm/loginInput';
 import FormProfile from '@/components/userPage/formProfile';
-import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const ProfileScreen = () => {
     const { user, logout,replaceLocalUseData } = useAuth();
     const [refreshing, setRefreshing] = React.useState(false);
+    const router = useRouter();
     const { sucess } = useLocalSearchParams<{sucess : string}>()
     const [ isError, setIsError ] = useState('');
     const { control, handleSubmit, formState: { errors } } = useForm<User>({
@@ -39,7 +40,11 @@ const ProfileScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-        <View className="flex-1 mx-4  pt-14">
+          <View className='p-4 mt-4 flex-row justify-evenly items-center'>
+            <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
+            <Text className='font-bold text-2xl text-black px-12 text-center my-4  py-2 rounded-2xl'>Informações Pessoais</Text>
+          </View>
+        <View className="flex-1 mx-4">
             <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} onRefresh={onRefresh} />
             
                <View className='my-4'>
@@ -50,7 +55,7 @@ const ProfileScreen = () => {
                        </Text>
                    </View>
                )}
-               <Text className='font-bold text-xl text-white text-center my-4 bg-black py-2 rounded-2xl'>Informações Pessoais</Text>
+              
 { control._defaultValues.nome_completo && <FormProfile label='Nome Completo' name={control._defaultValues.nome_completo as string}/>}
 { control._defaultValues.email && <FormProfile label='Email' name={control._defaultValues.email as string}/>}
 { control._defaultValues.telefone && <FormProfile label='Telefone' name={control._defaultValues.telefone as string}/>}
@@ -62,14 +67,6 @@ const ProfileScreen = () => {
              </View>
         
         </View>
-        <TouchableOpacity
-          className="items-center justify-center my-4"
-          accessibilityRole="button"
-          accessibilityLabel="Entrar na conta"
-          onPress={logout}
-        >
-       <AntDesign name="logout" size={24} color="red" />
-        </TouchableOpacity>
         <View className="flex-1 items-center justify-center bg-gray-200 py-4">
             <Text className="text-gray-700 text-center">
                 © 2023 Todos os direitos reservados.

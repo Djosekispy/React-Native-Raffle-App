@@ -6,9 +6,6 @@ export default function Layout() {
   return (
     <SafeAreaProvider>
       <Slot/>
-      <View className='w-full p-4 m-2 bg-transparent'>
-      <FooterTabs/>
-      </View>
     </SafeAreaProvider>
   );
 }
