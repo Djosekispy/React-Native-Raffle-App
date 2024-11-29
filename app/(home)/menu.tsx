@@ -12,7 +12,7 @@ export default function MenuPage() {
     const { user,logout } = useAuth();
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className="flex-1 bg-white px-2">
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header do Perfil */}
                 <ProfileHeader
@@ -23,9 +23,7 @@ export default function MenuPage() {
 
 
                 {/* Descrição do Menu */}
-                <Text className="text-lg p-4 my-2  text-justify">
-                    Explore as opções disponíveis para navegar e configurar sua experiência.
-                </Text>
+                
                 <View style={{  
                 borderTopWidth: 2,
                 borderTopColor: '#CACACA',
@@ -78,7 +76,7 @@ export default function MenuPage() {
                 borderTopWidth: 2,
                 borderTopColor: '#CACACA',
                 padding: 8,
-                margin: 8
+                marginTop: 25
          }}>
                 <Text className="text-lg" style={{
                     color : "#CACACA",
