@@ -1,46 +1,70 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+import React, { useRef, useEffect, useState } from 'react';
+import {
+  View,
+  Image,
+  FlatList,
+  Dimensions,
+  StyleSheet,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-const ImageCarousel = ({ images }) => {
-  const carouselRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+interface ImageCarouselProps {
+  images: string[]; // Lista de URLs das imagens
+}
 
-  // Avança o slide automaticamente
-  React.useEffect(() => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const flatListRef = useRef<FlatList<string>>(null);
+
+  // Rotação automática do carrossel
+  useEffect(() => {
     const interval = setInterval(() => {
-      carouselRef.current?.snapToNext();
-    }, 5000); // 5 segundos
+      const nextIndex = (currentIndex + 1) % images.length;
+      setCurrentIndex(nextIndex);
+      flatListRef.current?.scrollToIndex({
+        index: nextIndex,
+        animated: true,
+      });
+    }, 5000); // Troca a cada 5 segundos
 
     return () => clearInterval(interval);
-  }, []);
+  }, [currentIndex, images.length]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.slide}>
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / width);
+    setCurrentIndex(index);
+  };
+
+  const renderItem = ({ item }: { item: string }) => (
+    <View style={styles.imageContainer}>
       <Image source={{ uri: item }} style={styles.image} resizeMode="cover" />
     </View>
   );
 
   return (
     <View>
-      <Carousel
-        ref={carouselRef}
+      <FlatList
+        ref={flatListRef}
         data={images}
         renderItem={renderItem}
-        sliderWidth={width}
-        itemWidth={width}
-        onSnapToItem={(index) => setActiveIndex(index)}
-        loop={true}
+        keyExtractor={(_, index) => index.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScroll}
       />
+      {/* Indicador de paginação */}
       <View style={styles.pagination}>
         {images.map((_, index) => (
           <View
             key={index}
             style={[
               styles.dot,
-              activeIndex === index ? styles.activeDot : styles.inactiveDot,
+              currentIndex === index ? styles.activeDot : styles.inactiveDot,
             ]}
           />
         ))}
@@ -50,15 +74,14 @@ const ImageCarousel = ({ images }) => {
 };
 
 const styles = StyleSheet.create({
-  slide: {
-    flex: 1,
+  imageContainer: {
+    width,
     justifyContent: 'center',
     alignItems: 'center',
   },
   image: {
     width: '100%',
     height: 200, // Altura do carrossel
-    borderRadius: 8,
   },
   pagination: {
     flexDirection: 'row',
