@@ -1,75 +1,96 @@
 import React, { useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type ItemProps = {
   id: string;
-  image: string;
   title: string;
-  description: string;
-  inscritos: number;
 };
 
 const ItensSorteio = ({ items }: { items: ItemProps[] }) => {
   const [visibleItems, setVisibleItems] = useState(8);
+  const [expanded, setExpanded] = useState(false);
 
-  const renderItem = ({ item }: { item: ItemProps }) => (
-    <View className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-      {/* Imagem do Item */}
-      <Image
-        source={{ uri: item.image }}
-        className="w-full h-44"
-        resizeMode="cover"
-      />
-
-      {/* Informações do Item */}
-      <View className="p-4">
-        <Text className="text-lg font-bold mb-2" numberOfLines={1}>
-          {item.title}
-        </Text>
-        <Text className="text-sm text-gray-600 mb-3" numberOfLines={2}>
-          {item.description}
-        </Text>
-
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center">
-            <Ionicons name="people" size={16} color="gray" />
-            <Text className="text-sm text-gray-600 ml-2">
-              {item.inscritos} inscritos
-            </Text>
-          </View>
-          <TouchableOpacity className="bg-green-500 py-1 px-4 rounded-lg">
-            <Text className="text-white text-sm font-medium">Participar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+  const renderItem = ({ item, index }: { item: ItemProps; index: number }) => (
+    <View style={styles.item} key={index}>
+      <Text style={styles.title} numberOfLines={1}>
+        {item.title}
+      </Text>
     </View>
   );
 
-  const handleLoadMore = () => {
-    setVisibleItems((prev) => prev + 8); // Carrega mais 8 itens
+  const handleToggle = () => {
+    if (expanded) {
+      setVisibleItems(8); // Volta para o número inicial
+    } else {
+      setVisibleItems(items.length); // Exibe todos os itens
+    }
+    setExpanded(!expanded); // Alterna o estado
   };
 
   return (
-    <View className="p-4">
-      <Text className="text-xl font-bold mb-4">Itens Disponíveis para Sorteio</Text>
-      <FlatList
-        data={items.slice(0, visibleItems)}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 16 }}
-      />
-      {visibleItems < items.length && (
-        <TouchableOpacity
-          onPress={handleLoadMore}
-          className="bg-blue-500 py-2 px-4 rounded-lg self-center"
-        >
-          <Text className="text-white text-base font-medium">Ver Mais</Text>
-        </TouchableOpacity>
-      )}
+    <View style={styles.container}>
+      <View style={styles.listContainer}>
+      <Text style={styles.header}>Itens para Sorteio</Text>
+      <TouchableOpacity onPress={handleToggle} style={styles.button}>
+        <Text style={styles.buttonText}>
+          {expanded ? "Ver Menos" : "Ver Mais"}
+        </Text>
+      </TouchableOpacity>
+      </View>
+      
+      <View style={styles.listContainer}>
+        {items.slice(0, visibleItems).map((item, index) =>
+          renderItem({ item, index })
+        )}
+      </View>
+     
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    marginBottom: 50,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  listContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  item: {
+    width: "47%", // 47% para margem entre itens
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  button: {
+    padding: 4,
+    borderRadius: 8,
+    alignSelf: "center",
+  },
+  buttonText: {
+    color: "black",
+    textDecorationLine: 'underline',
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+});
 
 export { ItensSorteio, ItemProps };

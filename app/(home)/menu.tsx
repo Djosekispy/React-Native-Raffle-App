@@ -9,7 +9,7 @@ import MenuItem from "@/components/Menu/Itens";
 
 
 export default function MenuPage() {
-    const { user,logout } = useAuth();
+    const { user } = useAuth();
 
     return (
         <SafeAreaView className="flex-1 bg-white px-2">
@@ -106,14 +106,7 @@ export default function MenuPage() {
                         link="/featured"
                     />
                 </View>
-                <TouchableOpacity
-          className="items-center justify-center my-4"
-          accessibilityRole="button"
-          accessibilityLabel="Entrar na conta"
-          onPress={logout}
-        >
-       <AntDesign name="logout" size={24} color="red" />
-        </TouchableOpacity>
+              
                 {/* Footer */}
                 <View style={styles.footer}>
                     <Text style={styles.footerText}>

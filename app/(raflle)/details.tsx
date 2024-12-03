@@ -6,12 +6,14 @@ import BannerPublicidade from "@/components/home/publicity";
 import { ItensSorteio,ItemProps } from "@/components/home/raffleItens";
 import TopMenu from "@/components/home/topMenu";
 import WelcomeMessage from "@/components/Menu/animatedtop";
+import RaffleInfo from "@/components/raflle/info";
 import ProfileHeader from "@/components/userPage/ProfileHeader";
 import { useAuth } from "@/context";
 import { IRaffle } from "@/interfaces/IRaffles";
 import { api } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, ScrollView, ActivityIndicator } from "react-native";
 
@@ -27,10 +29,11 @@ const images = [
 
 
     
-const HomePage = () => {
+const DetailsPage = () => {
   const { user} = useAuth();
+  const { id } = useLocalSearchParams<{ id : string}>()
   const [ isLoading , setIsLoading ] = useState(false);
-  const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle[]>([])
+  const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle>()
 
   // Mock de resultados
   const resultados = Array.from({ length: 10 }, (_, i) => ({
@@ -41,11 +44,12 @@ const HomePage = () => {
   const getAllRaffles = async ()=> {
     setIsLoading(true);
       try{
-          const raffle = await api.get('/raffles',{
+          const raffle = await api.get(`/raffles/${user?.id}`,{
               headers : {
                 Authorization : `Bearer ${user?.token_acesso}`
               }
           })
+         console.log(JSON.stringify(raffle.data))
           setAvaliableRaffles(raffle.data.result)
       }catch(error){
           if(isAxiosError(error)){
@@ -71,36 +75,11 @@ const HomePage = () => {
 
 <TopMenu/>
 
- 
-
-  <View className="flex-row items-center space-x-2 mb-4 gap-2">
-    <ImageCarousel images={images} />
-  </View>
-
-
-<CategoriesList categories={raffleItens}  onPress={()=>setIsLoading(false)}/>
-
-
-  <Text className="text-2xl font-bold py-4">Campanhas em Destaque</Text>
-  {isLoading ? (
-    <ActivityIndicator size={35} color="gray" />
-  ) : (
-    <ListaResultados filteredResults={avaliableRaffles} />
-  )}
-
-  <AdsSubscribe />
-  <Text className="text-2xl font-bold py-4">Perto de Si</Text>
-  {isLoading ? (
-    <ActivityIndicator size={35} color="gray" />
-  ) : (
-    <ListaResultados filteredResults={avaliableRaffles} />
-  )}
-
-  <BannerPublicidade />
-  <ItensSorteio items={resultados} />
+{isLoading ? <ActivityIndicator color='gray' size={35} /> : <RaffleInfo raffle={avaliableRaffles as IRaffle} /> 
+}
 </ScrollView>
 
   );
 };
 
-export default HomePage;
+export default DetailsPage;
