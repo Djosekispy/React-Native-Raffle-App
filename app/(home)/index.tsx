@@ -13,6 +13,7 @@ import { IRaffle } from "@/interfaces/IRaffles";
 import { api } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, ScrollView, ActivityIndicator } from "react-native";
 
@@ -30,7 +31,7 @@ const HomePage = () => {
   const [ isLoading , setIsLoading ] = useState(false);
   const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle[]>([])
  const [ categoriesAvaliable, setCategoriesAvaliable ] = useState<{id : number , title : string}[]>([])
- 
+const router = useRouter();
  const itens = Array.from({length: 10},(_,index)=>{
   return {
     id : index,
@@ -44,10 +45,14 @@ const HomePage = () => {
   }
 
   const categoryFromRaffles = ()=>{
-     avaliableRaffles.map(item =>  (item.categorias as any)?.length > 0 && item.categorias?.map(value => setCategoriesAvaliable(prevState => [...prevState, {id : value.id, title : value.nome}])))
-  }
+    const aval =  avaliableRaffles.map(item =>  (item.categorias as any)?.length > 0 && item.categorias?.map(value => setCategoriesAvaliable([{id : value.id, title : value.nome}])))
+    }
 
 
+    const goToDetails = (id: number) => {
+      router.push({ pathname: '/(one)/', params: { id } });
+    };
+  
   const getAllRaffles = async ()=> {
     setIsLoading(true);
       try{
@@ -67,14 +72,17 @@ const HomePage = () => {
           }
       }finally{
         setIsLoading(false)
-        coverFromRaffles();
-       categoryFromRaffles();
+       
       }
   }
 
 
   useEffect(()=>{
-    getAllRaffles();
+    getAllRaffles()
+      .then(()=>{
+        coverFromRaffles();
+        categoryFromRaffles();
+    });
   },[])
 
 
@@ -98,14 +106,14 @@ const HomePage = () => {
   {isLoading ? (
     <ActivityIndicator size={35} color="gray" />
   ) : (
-    <ListaResultados filteredResults={avaliableRaffles} label="Campanhas em Destaque"/>
+    <ListaResultados filteredResults={avaliableRaffles} label="Campanhas em Destaque" goToDetails={goToDetails}/>
   )}
 
   <AdsSubscribe />
   {isLoading ? (
     <ActivityIndicator size={35} color="gray" />
   ) : (
-    <ListaResultados filteredResults={avaliableRaffles} label="Perto de Si"/>
+    <ListaResultados filteredResults={avaliableRaffles} label="Perto de Si" goToDetails={goToDetails}/>
   )}
 
   <BannerPublicidade />

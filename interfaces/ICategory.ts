@@ -1,3 +1,4 @@
+import { IItens } from "./IItens";
 
 
 export interface ICategoria {
@@ -7,4 +8,5 @@ export interface ICategoria {
   sorteioId: number;
   createdAt?: Date;
   updatedAt?: Date;
+  itens ? :IItens[]
 }

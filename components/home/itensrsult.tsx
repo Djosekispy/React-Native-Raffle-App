@@ -13,15 +13,11 @@ const formatarData = (data: string) => {
   return `${meses[parseInt(mes, 10) - 1]} ${ano}`;
 };
 
-const ListaResultados = ({ filteredResults , label}: { filteredResults: any[], label : string }) => {
+const ListaResultados = ({ filteredResults , label, goToDetails}: { filteredResults: any[], label : string, goToDetails(id : number): void }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 16;
   const router = useRouter();
-
-  const goToDetails = (id: number) => {
-    router.push({ pathname: '/(raflle)/details', params: { id } });
-  };
 
   // Dados paginados ou completos, dependendo do estado
   const paginatedData = isExpanded
@@ -35,7 +31,7 @@ const ListaResultados = ({ filteredResults , label}: { filteredResults: any[], l
   return (
     <View>
       {/* Título com botão Ver Mais/Menos */}
-      <View className="flex-row justify-between items-center mb-4">
+      <View className="flex-row justify-between items-center my-6">
         <Text className="text-2xl font-bold text-gray-800">{label}</Text>
         <TouchableOpacity
           onPress={handleToggleView}
@@ -69,17 +65,10 @@ const ListaResultados = ({ filteredResults , label}: { filteredResults: any[], l
               />
 
               {/* Categoria */}
-              <Text
-                onPress={() => goToDetails(item.id)}
-                className="absolute bottom-2 left-2 bg-black text-white text-xs font-medium py-1 px-2 rounded"
-              >
-                {item.status}
-              </Text>
-
               {/* Total de Inscritos */}
               <View className="absolute top-2 right-2 bg-black text-white text-xs font-medium py-1 px-2 rounded flex-row items-center">
-                <Ionicons name="people" size={12} color="white" />
-                <Text className="ml-1 text-white">{item.inscritos || "134"}</Text>
+                <Ionicons name="ticket" size={12} color="white" />
+                <Text className="ml-1 text-white">{item.categorias.length || "00"}</Text>
               </View>
             </View>
 

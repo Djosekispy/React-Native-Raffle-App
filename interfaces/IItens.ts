@@ -1,3 +1,4 @@
+import { IInscricoes } from "./IInscricoes";
 
 
 export interface IItens {
@@ -6,6 +7,7 @@ export interface IItens {
     propriedades: object;
     descricao: string;
     categoriaId: number;
+    inscricoes ? : IInscricoes[];
     createdAt?: Date;
     updatedAt?: Date;
 }

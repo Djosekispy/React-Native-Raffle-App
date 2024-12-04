@@ -1,21 +1,16 @@
-import AdsSubscribe from "@/components/home/addSubscribe";
-import ImageCarousel from "@/components/home/carrosel";
-import CategoriesList from "@/components/home/categories";
-import ListaResultados from "@/components/home/itensrsult";
-import BannerPublicidade from "@/components/home/publicity";
-import { ItensSorteio,ItemProps } from "@/components/home/raffleItens";
+
 import TopMenu from "@/components/home/topMenu";
-import WelcomeMessage from "@/components/Menu/animatedtop";
+import CategoryList from "@/components/raflle/category";
 import RaffleInfo from "@/components/raflle/info";
-import ProfileHeader from "@/components/userPage/ProfileHeader";
 import { useAuth } from "@/context";
+import { ICategoria } from "@/interfaces/ICategory";
 import { IRaffle } from "@/interfaces/IRaffles";
 import { api } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text,TouchableOpacity,ScrollView, ActivityIndicator } from "react-native";
 
 
 
@@ -29,12 +24,14 @@ const images = [
 
 
     
-const DetailsPage = () => {
+export default function  DetailsPage() {
   const { user} = useAuth();
   const { id } = useLocalSearchParams<{ id : string}>()
   const [ isLoading , setIsLoading ] = useState(false);
   const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle>()
-
+  
+ const [ categoriesAvaliable, setCategoriesAvaliable ] = useState<string[]>([])
+   const router = useRouter();
 
   const getAllRaffles = async ()=> {
     setIsLoading(true);
@@ -44,7 +41,7 @@ const DetailsPage = () => {
                 Authorization : `Bearer ${user?.token_acesso}`
               }
           })
-         console.log(JSON.stringify(raffle.data))
+       
           setAvaliableRaffles(raffle.data.result)
       }catch(error){
           if(isAxiosError(error)){
@@ -54,12 +51,21 @@ const DetailsPage = () => {
           }
       }finally{
         setIsLoading(false)
+        //console.log(JSON.stringify(avaliableRaffles))
+        getAvalibleCategories()
       }
   }
 
+  const getAvalibleCategories = ()=>{
+    const aval = avaliableRaffles?.categorias?.map(item => setCategoriesAvaliable([item?.nome]))
+   
+  }
 
   useEffect(()=>{
-    getAllRaffles();
+    getAllRaffles()
+      .then(()=>{
+        getAvalibleCategories()
+      });
   },[])
 
 
@@ -67,14 +73,18 @@ const DetailsPage = () => {
 
   return (
 <ScrollView className="flex-1 bg-white px-4 pt-12 pb-20"> 
+    <TouchableOpacity onPress={()=>router.back()}>
+    <Text>Voltar</Text>
+      </TouchableOpacity>
+    <TopMenu/>
+    {isLoading ? <ActivityIndicator color='gray' size={35} /> : <>
 
-<TopMenu/>
-
-{isLoading ? <ActivityIndicator color='gray' size={35} /> : <RaffleInfo raffle={avaliableRaffles as IRaffle} /> 
-}
+  
+    <RaffleInfo raffle={avaliableRaffles as IRaffle} /> 
+    <CategoryList categories={categoriesAvaliable} onSelect={()=>alert('cento')}/>
+    </>
+    }
 </ScrollView>
 
   );
 };
-
-export default DetailsPage;
