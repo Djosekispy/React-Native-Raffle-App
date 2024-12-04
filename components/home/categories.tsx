@@ -2,8 +2,11 @@ import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 
 type CategoryProps = {
-  categories: string[];
-  onPress: (category: string) => void;
+  categories: {
+    id : number;
+    title : string
+  }[];
+  onPress: (category: number) => void;
 };
 
 const CategoriesList = ({ categories, onPress }: CategoryProps) => {
@@ -13,10 +16,10 @@ const CategoriesList = ({ categories, onPress }: CategoryProps) => {
         <TouchableOpacity
           key={index}
           className="bg-blue-500 rounded-lg px-4 py-2 mx-2"
-          onPress={() => onPress(category)}
+          onPress={() => onPress(category.id)}
         >
           <Text className="text-white text-xs font-medium" numberOfLines={1}>
-            {category}
+            {category.title}
           </Text>
         </TouchableOpacity>
       ))}

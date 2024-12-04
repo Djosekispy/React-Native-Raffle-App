@@ -8,6 +8,7 @@ import TopMenu from "@/components/home/topMenu";
 import WelcomeMessage from "@/components/Menu/animatedtop";
 import ProfileHeader from "@/components/userPage/ProfileHeader";
 import { useAuth } from "@/context";
+import { ICategoria } from "@/interfaces/ICategory";
 import { IRaffle } from "@/interfaces/IRaffles";
 import { api } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,9 +21,6 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Image, ScrollView, A
 
 const images = [
   "https://picsum.photos/800/600",
-  "https://picsum.photos/800/600",
-  "https://picsum.photos/800/600",
- "https://picsum.photos/800/600",
 ];
 
 
@@ -31,12 +29,24 @@ const HomePage = () => {
   const { user} = useAuth();
   const [ isLoading , setIsLoading ] = useState(false);
   const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle[]>([])
-
+ const [ categoriesAvaliable, setCategoriesAvaliable ] = useState<{id : number , title : string}[]>([])
+ 
+ const itens = Array.from({length: 10},(_,index)=>{
+  return {
+    id : index,
+    title : 'item' + index
+  }
+ })
   // Mock de resultados
-  const resultados = Array.from({ length: 10 }, (_, i) => ({
-    id: String(i + 1),
-    title: `Sorteio ${i + 1}`
-  }));
+
+  const coverFromRaffles = ()=>{
+    avaliableRaffles.map(item => images.push(item?.cover as string))
+  }
+
+  const categoryFromRaffles = ()=>{
+     avaliableRaffles.map(item =>  (item.categorias as any)?.length > 0 && item.categorias?.map(value => setCategoriesAvaliable(prevState => [...prevState, {id : value.id, title : value.nome}])))
+  }
+
 
   const getAllRaffles = async ()=> {
     setIsLoading(true);
@@ -46,6 +56,8 @@ const HomePage = () => {
                 Authorization : `Bearer ${user?.token_acesso}`
               }
           })
+
+        //  console.log('Resultados',JSON.stringify(raffle.data.result))
           setAvaliableRaffles(raffle.data.result)
       }catch(error){
           if(isAxiosError(error)){
@@ -55,6 +67,8 @@ const HomePage = () => {
           }
       }finally{
         setIsLoading(false)
+        coverFromRaffles();
+       categoryFromRaffles();
       }
   }
 
@@ -78,26 +92,24 @@ const HomePage = () => {
   </View>
 
 
-<CategoriesList categories={raffleItens}  onPress={()=>setIsLoading(false)}/>
+<CategoriesList categories={categoriesAvaliable}  onPress={()=>setIsLoading(false)}/>
 
 
-  <Text className="text-2xl font-bold py-4">Campanhas em Destaque</Text>
   {isLoading ? (
     <ActivityIndicator size={35} color="gray" />
   ) : (
-    <ListaResultados filteredResults={avaliableRaffles} />
+    <ListaResultados filteredResults={avaliableRaffles} label="Campanhas em Destaque"/>
   )}
 
   <AdsSubscribe />
-  <Text className="text-2xl font-bold py-4">Perto de Si</Text>
   {isLoading ? (
     <ActivityIndicator size={35} color="gray" />
   ) : (
-    <ListaResultados filteredResults={avaliableRaffles} />
+    <ListaResultados filteredResults={avaliableRaffles} label="Perto de Si"/>
   )}
 
   <BannerPublicidade />
-  <ItensSorteio items={resultados} />
+  <ItensSorteio items={itens} />
 </ScrollView>
 
   );

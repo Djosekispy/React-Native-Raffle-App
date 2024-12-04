@@ -35,16 +35,11 @@ const DetailsPage = () => {
   const [ isLoading , setIsLoading ] = useState(false);
   const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle>()
 
-  // Mock de resultados
-  const resultados = Array.from({ length: 10 }, (_, i) => ({
-    id: String(i + 1),
-    title: `Sorteio ${i + 1}`
-  }));
 
   const getAllRaffles = async ()=> {
     setIsLoading(true);
       try{
-          const raffle = await api.get(`/raffles/${user?.id}`,{
+          const raffle = await api.get(`/raffles/${id}`,{
               headers : {
                 Authorization : `Bearer ${user?.token_acesso}`
               }

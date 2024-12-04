@@ -1,3 +1,4 @@
+import { ICategoria } from "./ICategory"
 
 
 interface IRaffle {
@@ -10,6 +11,7 @@ interface IRaffle {
     politicas: string,
     createdAt?: Date,
     updatedAt?: Date
+    categorias? : ICategoria[]
 }
 
 type StatusRaffle = {
