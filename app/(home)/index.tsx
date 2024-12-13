@@ -108,7 +108,6 @@ const HomePage = () => {
       )}
 
       <AdsSubscribe  />
-      <BannerPublicidade />
       <ItensSorteio items={itens} />
     </ScrollView>
   );

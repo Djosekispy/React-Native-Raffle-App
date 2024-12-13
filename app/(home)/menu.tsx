@@ -50,7 +50,7 @@ export default function MenuPage() {
                      <MenuItem
                         title="Criar Sorteio"
                         description="Crie sorteios de forma simples e rápida"
-                        link="/settings"
+                        link="/(one)/raffle_form"
                     />
                      <MenuItem
                         title="Painel de Admin"
