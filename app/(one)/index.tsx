@@ -1,90 +1,87 @@
-
-import TopMenu from "@/components/home/topMenu";
-import CategoryList from "@/components/raflle/category";
-import RaffleInfo from "@/components/raflle/info";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context";
-import { ICategoria } from "@/interfaces/ICategory";
 import { IRaffle } from "@/interfaces/IRaffles";
 import { api } from "@/utils/api";
-import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { View, Text,TouchableOpacity,ScrollView, ActivityIndicator } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import RaffleInfo from "@/components/raflle/info";
+import CategoryList from "@/components/raflle/category";
 
+export default function DetailsPage() {
+  const { user } = useAuth();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [raffle, setRaffle] = useState<IRaffle | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
-
-const images = [
-  "https://picsum.photos/800/600",
-  "https://picsum.photos/800/600",
-  "https://picsum.photos/800/600",
- "https://picsum.photos/800/600",
-];
-
-
-    
-export default function  DetailsPage() {
-  const { user} = useAuth();
-  const { id } = useLocalSearchParams<{ id : string}>()
-  const [ isLoading , setIsLoading ] = useState(false);
-  const [avaliableRaffles , setAvaliableRaffles ] = useState<IRaffle>()
-  
- const [ categoriesAvaliable, setCategoriesAvaliable ] = useState<string[]>([])
-   const router = useRouter();
-
-  const getAllRaffles = async ()=> {
+  const fetchRaffleDetails = async () => {
     setIsLoading(true);
-      try{
-          const raffle = await api.get(`/raffles/${id}`,{
-              headers : {
-                Authorization : `Bearer ${user?.token_acesso}`
-              }
-          })
-       
-          setAvaliableRaffles(raffle.data.result)
-      }catch(error){
-          if(isAxiosError(error)){
-            console.log(error.response?.data.message)
-          }else{
-            console.log("Erro inesperado : " + error)
-          }
-      }finally{
-        setIsLoading(false)
-        //console.log(JSON.stringify(avaliableRaffles))
-        getAvalibleCategories()
-      }
-  }
-
-  const getAvalibleCategories = ()=>{
-    const aval = avaliableRaffles?.categorias?.map(item => setCategoriesAvaliable([item?.nome]))
-   
-  }
-
-  useEffect(()=>{
-    getAllRaffles()
-      .then(()=>{
-        getAvalibleCategories()
+    try {
+      const response = await api.get(`/raffles/${id}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token_acesso}`,
+        },
       });
-  },[])
 
+      const fetchedRaffle = response.data.result;
+      setRaffle(fetchedRaffle);
 
-  const raffleItens = Array.from({ length: 10 }, (_, i) => 'categoria');
+      const fetchedCategories = fetchedRaffle.categorias?.map((cat: any) => cat.nome) || [];
+      setCategories(fetchedCategories);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        console.error("Erro na API:", error.response?.data?.message || "Erro desconhecido");
+      } else {
+        console.error("Erro inesperado:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchRaffleDetails();
+    }
+  }, [id]);
 
   return (
-<ScrollView className="flex-1 bg-white px-4 pt-12 pb-20"> 
-    <TouchableOpacity onPress={()=>router.back()}>
-    <Text>Voltar</Text>
-      </TouchableOpacity>
-    <TopMenu/>
-    {isLoading ? <ActivityIndicator color='gray' size={35} /> : <>
+    <ScrollView className="flex-1 bg-white px-4 pt-12 pb-20">
+      <View className="flex-row items-center justify-between">
+        {/* Botão de voltar */}
+        <TouchableOpacity onPress={() => router.back()} className="ml-4">
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
 
-  
-    <RaffleInfo raffle={avaliableRaffles as IRaffle} /> 
-    <CategoryList categories={categoriesAvaliable} onSelect={()=>alert('cento')}/>
-    </>
-    }
-</ScrollView>
+        {/* Título Central */}
+        <Text className="text-xl font-bold text-center flex-1">Detalhes do produto</Text>
 
+        {/* Espaço reservado para balancear o layout */}
+        <View className="w-6" />
+      </View>
+
+      {isLoading ? (
+        <ActivityIndicator color="gray" size={35} />
+      ) : raffle ? (
+        <>
+          {/* Informações do sorteio */}
+          <RaffleInfo raffle={raffle} />
+
+          {/* Lista de categorias */}
+          {categories.length > 0 && (
+            <CategoryList categories={categories} onSelect={(category) => alert(`Selecionou: ${category}`)} />
+          )}
+        </>
+      ) : (
+        // Mensagem de fallback
+        <Text className="text-center text-gray-500 mt-10">
+          Nenhum detalhe disponível para este sorteio.
+        </Text>
+      )}
+    </ScrollView>
   );
-};
+}
