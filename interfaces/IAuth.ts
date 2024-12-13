@@ -20,7 +20,6 @@ const schemaLogin = yup.object({
       .email('Digite um e-mail válido'),
     password: yup.string()
       .required('Senha é obrigatória')
-      .min(6, 'A senha deve ter no mínimo 6 caracteres'),
   });
   
   type FormDataLogin = yup.InferType<typeof schemaLogin>;

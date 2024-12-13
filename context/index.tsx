@@ -94,7 +94,7 @@ const replaceLocalUseData = async():   Promise<User | { error : string }> =>{
     const checkUser = async () => {
       const user = await getUser();
       if (!user) {
-    //    router.replace('/login');
+         router.replace('/login');
       }
     };
     checkUser();

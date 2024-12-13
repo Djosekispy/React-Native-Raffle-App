@@ -55,7 +55,7 @@ export default function MenuPage() {
                      <MenuItem
                         title="Painel de Admin"
                         description="Faça a gestão eficiente dos seus sorteios"
-                        link="/settings"
+                        link="/painel/"
                     />
                   
                     <MenuItem

@@ -47,6 +47,7 @@ export default function AddCategoriaToRaffle() {
     try {
       // Adicionar nova categoria ao sorteio
       Alert.alert('Categoria adicionada com sucesso!');
+      router.push({pathname: '/(one)/itens_form', params: { id : '4'}})
     } catch (error) {
       console.error(error);
       Alert.alert('Erro ao adicionar categoria', 'Tente novamente mais tarde');
@@ -63,7 +64,7 @@ export default function AddCategoriaToRaffle() {
             <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
             <Text className="text-3xl font-bold text-gray-800 mb-2">Adicionar Categoria</Text>
              </View>
-        <Text className="text-base text-gray-600">Escolha ou crie uma nova categoria para o sorteio.</Text>
+        <Text className="text-base text-gray-600">crie e edite uma nova categoria para o sorteio.</Text>
       </View>
 
       {/* Formulário para adicionar nova categoria */}

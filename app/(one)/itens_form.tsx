@@ -6,10 +6,11 @@ import * as yup from 'yup';
 import { useLocalSearchParams } from 'expo-router'; 
 import { FormInput } from '@/components/loginForm/loginInput';
 import { ICategoria } from '@/interfaces/ICategory';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { useRouter } from 'expo-router';
 
-// Modelo para item (usando o IItens)
+
 interface IItens {
   id?: number;
   nome: string;
@@ -25,7 +26,6 @@ interface IPropriedade {
   value: string;
 }
 
-// Schema de validação com Yup
 const itemSchema = yup.object().shape({
   nome: yup.string().required('O nome do item é obrigatório'),
   descricao: yup.string().required('A descrição do item é obrigatória'),
@@ -47,7 +47,8 @@ export default function AddItemToCategoria() {
   const [isLoading, setIsLoading] = useState(false);
   const [categorias, setCategorias] = useState<ICategoria[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<ICategoria | null>(null);
-  const { sorteioId } = useLocalSearchParams<{ sorteioId : string}>(); // Obter o ID do sorteio
+  const { sorteioId } = useLocalSearchParams<{ sorteioId : string}>(); 
+  const router = useRouter();
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<ItemFormData>({
     resolver: yupResolver(itemSchema),
     defaultValues: {
@@ -58,10 +59,8 @@ export default function AddItemToCategoria() {
   });
 
   useEffect(() => {
-    // Carregar as categorias relacionadas ao sorteio
     const fetchCategorias = async () => {
       try {
-        // Simulação de requisição para pegar as categorias
         const response = await fetch(`/api/categorias?sorteioId=${sorteioId}`);
         const data = await response.json();
         setCategorias(data);
@@ -79,19 +78,6 @@ export default function AddItemToCategoria() {
   const onSubmit = async (data: ItemFormData) => {
     setIsLoading(true);
     try {
-      // Adicionar novo item à categoria
-      const response = await fetch(`/api/itens`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          categoriaId: selectedCategoria?.id, // Associar ao categoria selecionada
-        }),
-      });
-
-      const newItem = await response.json();
       Alert.alert('Item adicionado com sucesso!');
     } catch (error) {
       console.error(error);
@@ -116,8 +102,11 @@ export default function AddItemToCategoria() {
   return (
     <View className="flex-1 bg-white px-6 py-8">
       {/* Cabeçalho */}
-      <View className="mb-8">
-        <Text className="text-3xl font-bold text-gray-800 mb-2">Adicionar Item à Categoria</Text>
+      <View className="mb-8 pt-4">
+      <View className='flex-row justify-start gap-12 items-center'>
+            <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
+            <Text className="text-3xl font-bold text-gray-800 mb-2">Adicionar Item</Text>
+             </View>
         <Text className="text-base text-gray-600">Escolha a categoria e adicione um novo item.</Text>
       </View>
 
@@ -138,7 +127,7 @@ export default function AddItemToCategoria() {
       </View>
 
       {/* Formulário para adicionar um novo item */}
-      <View>
+      <View className='gap-4'>
         <Text className="text-gray-700 text-sm font-medium mb-2">Adicionar Novo Item</Text>
 
         <FormInput
