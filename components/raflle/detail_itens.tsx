@@ -5,10 +5,11 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 interface ItemDetailProps {
   item: IItens;
+  owner: number | undefined;
   onSubscribe: (itemId: number) => void;
 }
 
-const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe }) => {
+const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => {
   const { user } = useAuth();
 
   // Verifica se o usuário está entre os inscritos
@@ -17,7 +18,7 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe }) => {
   }, [item.inscricoes, user?.id]);
 
   return (
-    <View className="flex-1 bg-white p-4 rounded-lg shadow-md">
+    <View className="flex-1 bg-white px-4 pb-4 rounded-lg">
       {/* Nome do Item */}
       <Text className="text-xl font-bold text-gray-800 mb-2">{item.nome}</Text>
 
@@ -39,7 +40,7 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe }) => {
       </Text>
 
       {/* Botão de Inscrição */}
-      {!isUserSubscribed ? (
+      {owner !== user?.id && !isUserSubscribed ? (
         <TouchableOpacity
           className="bg-[#FF7F50] rounded-md p-4 mb-12"
           onPress={() => onSubscribe(item.id!)}

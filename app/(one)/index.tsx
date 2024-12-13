@@ -68,11 +68,12 @@ export default function DetailsPage() {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-12 pb-20">
-      <View className="flex-row items-center justify-between">
+      <View className="flex-1">
+      <View className="flex-row items-center justify-start pb-4">
         <TouchableOpacity onPress={() => router.back()} className="ml-4">
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-center flex-1">Detalhes do produto</Text>
+        <Text className="text-3xl font-bold text-center flex-1">Detalhes do produto</Text>
         <View className="w-6" />
       </View>
 
@@ -81,9 +82,6 @@ export default function DetailsPage() {
       ) : raffle ? (
         <>
           <RaffleInfo raffle={raffle} />
-          {categories.length > 0 && (
-            <CategoryList categories={categories} selected={selected}  onSelect={(category) => SetSelected} />
-          )}
         </>
       ) : (
         <Text className="text-center text-gray-500 mt-10">
@@ -92,11 +90,15 @@ export default function DetailsPage() {
       )}
     {categories && itens.length > 0 && itens.map((iten, index) => 
       (iten as any).category === selected && (
-        <ItemDetail key={index} item={iten} onSubscribe={() => alert('Inscreveu-se')} />
+        <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={() => alert('Inscreveu-se')} />
       )
     )}
-
-
+<View className="mb-4">
+{categories.length > 0 && (
+            <CategoryList categories={categories} selected={selected}  onSelect={(category) => SetSelected} />
+          )}
+</View>
+</View>
     </ScrollView>
   );
 }
