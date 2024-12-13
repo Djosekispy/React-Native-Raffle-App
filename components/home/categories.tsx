@@ -15,7 +15,7 @@ const CategoriesList = ({ categories, onPress }: CategoryProps) => {
       {categories.map((category, index) => (
         <TouchableOpacity
           key={index}
-          className="bg-blue-500 rounded-lg px-4 py-2 mx-2"
+          className="bg-black rounded-lg px-4 py-2 mx-2"
           onPress={() => onPress(category.id)}
         >
           <Text className="text-white text-xs font-medium" numberOfLines={1}>
