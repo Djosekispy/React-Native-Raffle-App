@@ -7,6 +7,7 @@ import { useAuth } from '@/context';
 import { isAxiosError } from 'axios';
 import { api } from '@/utils/api';
 import { IRaffle } from '@/interfaces/IRaffles';
+import { useLocalSearchParams } from 'expo-router';
 
 interface Inscrito {
   id: number;
@@ -77,7 +78,7 @@ const AdminPanel: React.FC = () => {
   const [selectedRaffle, setSelectedRaffle] = useState<IRaffle | null>(null);
   const [raffles, setRaffles] = useState<IRaffle[]>([]);
   const [ isLoading, setIsLoading] = useState(false)
-
+    const { msg } = useLocalSearchParams<{msg : string}>()
   const handleViewDetails = (id: string) => {
     router.push({ pathname : '/(one)/', params: {id}})
   };
@@ -93,22 +94,21 @@ const AdminPanel: React.FC = () => {
         title="Instruções"
         description="Use este painel para gerenciar sorteios, categorias e itens. Clique nos botões abaixo para criar novos recursos."
       />
-
       <View className="flex-row justify-between mb-6">
         <View className="flex flex-col items-center">
-          <TouchableOpacity className="bg-blue-600 py-3 px-6 rounded shadow">
+          <TouchableOpacity className="bg-blue-600 py-3 px-6 rounded shadow" onPress={()=>router.push('/(one)/raffle_form')}>
           <AntDesign name="codesquareo" size={24} color="black" />
           </TouchableOpacity>
           <Text className="text-sm text-gray-600">Criar Sorteio</Text>
         </View>
         <View className="flex flex-col items-center">
-          <TouchableOpacity className="bg-purple-600 py-3 px-6 rounded shadow">
+          <TouchableOpacity className="bg-purple-600 py-3 px-6 rounded shadow" onPress={()=>router.push('/(one)/category_form')}>
           <AntDesign name="barschart" size={24} color="black" />
           </TouchableOpacity>
           <Text className="text-sm text-gray-600">Adicionar Categoria</Text>
         </View>
         <View className="flex flex-col items-center">
-          <TouchableOpacity className="bg-teal-600 py-3 px-6 rounded shadow">
+          <TouchableOpacity className="bg-teal-600 py-3 px-6 rounded shadow" onPress={()=>router.push('/(one)/itens_form')}>
           <AntDesign name="plussquareo" size={24} color="black" />
           </TouchableOpacity>
           <Text className="text-sm text-gray-600">Adicionar Item</Text>
@@ -235,6 +235,11 @@ const AdminPanel: React.FC = () => {
             <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
             <Text className="text-3xl font-bold text-gray-800 mb-2">Painel de gestão</Text>
     </View>
+      {msg && (
+        <View className="bg-green-100 border border-green-500 p-4 mb-4 rounded">
+          <Text className="text-green-500 text-center">{msg}</Text>
+        </View>
+      )}
       {view === 'main' && renderMainView()}
       {view === 'details' && renderDetailsView()}
       {view === 'inscritos' && renderInscritosView()}

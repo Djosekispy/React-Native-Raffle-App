@@ -1,9 +1,12 @@
+import { useAuth } from "@/context";
 import { IRaffle } from "@/interfaces/IRaffles";
 import { Ionicons } from "@expo/vector-icons";
 import { View, Text, Image } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
+  const { user } = useAuth();
   return (
     <View className="p-4 bg-white rounded-lg  mb-4">    
       <Image
@@ -41,10 +44,16 @@ const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
       </View>
       </View>
 
-      <View className="flex-row items-start ">
-      <Ionicons name="information-circle" size={24} color="gray" />
+      <View className="flex-row items-start justify-between ">
+        <View>
+        <Ionicons name="information-circle" size={24} color="gray" />
       <Text className="text-xl font-bold text-black ml-2">Descrição</Text>
+        </View>
+       {user?.id === raffle.organizadorId && <TouchableOpacity style={{backgroundColor:'darkblue', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20}}>
+          <Text className="text-sm text-white">Editar</Text>
+        </TouchableOpacity>}
       </View>
+      
       <View>
       <Text className="text-gray-700 ml-2">{raffle?.politicas}</Text>
       </View>

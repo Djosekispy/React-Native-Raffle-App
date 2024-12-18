@@ -47,17 +47,20 @@ export default function MenuPage() {
                         description="Veja suas candidaturas"
                         link="/settings"
                     />
-                     <MenuItem
-                        title="Criar Sorteio"
-                        description="Crie sorteios de forma simples e rápida"
-                        link="/(one)/raffle_form"
-                    />
-                     <MenuItem
-                        title="Painel de Admin"
-                        description="Faça a gestão eficiente dos seus sorteios"
-                        link="/painel/"
-                    />
-                  
+                   {user?.tipo_perfil === 'sorteador' && ( 
+                       <>  
+                           <MenuItem
+                               title="Criar Sorteio"
+                               description="Crie sorteios de forma simples e rápida"
+                               link="/(one)/raffle_form"
+                           />
+                           <MenuItem
+                               title="Painel de Admin"
+                               description="Faça a gestão eficiente dos seus sorteios"
+                               link="/painel/"
+                           />
+                       </>
+                   )}
                     <MenuItem
                         title="Feedback"
                         description="Envie suas sugestões ou reclamações"

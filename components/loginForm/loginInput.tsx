@@ -9,6 +9,7 @@ type FormInputProps = {
   name: string;
   icon: any;
   error?: string;
+  multiline ? : boolean;
   secureTextEntry?: boolean;
   keyboardType?: 'default' | 'email-address' | 'numeric';
   placeholder: string;
@@ -21,6 +22,7 @@ export function FormInput({
   error,
   secureTextEntry,
   keyboardType = 'default',
+  multiline = false,
   placeholder
 }: FormInputProps) {
   const [focused, setFocused] = useState(false);
@@ -40,6 +42,7 @@ export function FormInput({
           render={({ field: { onChange, value } }) => (
             <TextInput
             value={value}
+            multiline = {multiline}
             onChangeText={onChange}
             placeholder={placeholder}
             secureTextEntry={showPassword ? false : secureTextEntry}

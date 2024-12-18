@@ -11,14 +11,14 @@ interface ItemDetailProps {
 
 const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => {
   const { user } = useAuth();
-
+console.log(item.propriedades)
   // Verifica se o usuário está entre os inscritos
   const isUserSubscribed = useMemo(() => {
     return item.inscricoes?.some((inscricao) => inscricao.usuarioId === user?.id);
   }, [item.inscricoes, user?.id]);
 
   return (
-    <View className="flex-1 bg-white px-4 pb-4 rounded-lg">
+    <View className="flex-1 bg-white px-4 pb-4 rounded-lg shadow-md">
       {/* Nome do Item */}
       <Text className="text-xl font-bold text-gray-800 mb-2">{item.nome}</Text>
 
@@ -26,7 +26,7 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => 
       <Text className="text-base text-gray-600 mb-4">{item.descricao}</Text>
 
       {/* Propriedades */}
-      <View className="mb-4  flex-row gap-4 flex-wrap">
+      <View className="mb-4 flex-row gap-4 flex-wrap">
         {Object.entries(item.propriedades).map(([key, value]) => (
           <Text key={key} className="text-sm text-gray-500 mr-2">
             {key}: {value}
@@ -35,12 +35,12 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => 
       </View>
 
       {/* Total de Inscritos */}
-      <Text className="text-base font-bold text-gray-700 mb-4">
+      <Text className={`text-base font-bold ${item.inscricoes && item.inscricoes?.length > 0 ? 'text-green-600' : 'text-red-600'} mb-4`}>
         Total de Inscritos: {item.inscricoes?.length || 0}
       </Text>
 
       {/* Botão de Inscrição */}
-      {owner !== user?.id && !isUserSubscribed ? (
+      {owner !== user?.id && (!isUserSubscribed ? (
         <TouchableOpacity
           className="bg-[#FF7F50] rounded-md p-4 mb-12"
           onPress={() => onSubscribe(item.id!)}
@@ -49,7 +49,10 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => 
         </TouchableOpacity>
       ) : (
         <Text className="text-green-600 italic">Você já está inscrito!</Text>
-      )}
+      ))
+      
+      }
+
     </View>
   );
 };

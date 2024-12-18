@@ -21,6 +21,8 @@ export default function DetailsPage() {
   const [raffle, setRaffle] = useState<IRaffle | null>(null);
   const [categories, setCategories] = useState([]);
   const [itens, setItens] = useState([]);
+
+  const onSelect = (id : number)=>SetSelected(id)
   const fetchRaffleDetails = async () => {
     setIsLoading(true);
     try {
@@ -48,7 +50,7 @@ export default function DetailsPage() {
         }))
       ) || [];
     setItens(fetchedItens);
-
+console.log(JSON.stringify(fetchedItens))
     } catch (error) {
       if (isAxiosError(error)) {
         console.error("Erro na API:", error.response?.data?.message || "Erro desconhecido");
@@ -68,7 +70,7 @@ export default function DetailsPage() {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-12 pb-20">
-      <View className="flex-1">
+      <View className="flex-1 pb-12">
       <View className="flex-row items-center justify-start pb-4">
         <TouchableOpacity onPress={() => router.back()} className="ml-4">
           <Ionicons name="arrow-back" size={24} color="black" />
@@ -95,7 +97,7 @@ export default function DetailsPage() {
     )}
 <View className="mb-4">
 {categories.length > 0 && (
-            <CategoryList categories={categories} selected={selected}  onSelect={(category) => SetSelected} />
+            <CategoryList categories={categories} selected={selected}  onSelect={onSelect} />
           )}
 </View>
 </View>
