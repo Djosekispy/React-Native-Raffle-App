@@ -1,12 +1,41 @@
 import { useAuth } from "@/context";
 import { IRaffle } from "@/interfaces/IRaffles";
+import { api } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, Image } from "react-native";
+import { isAxiosError } from "axios";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { View, Text, Image, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
   const { user } = useAuth();
+  const  router = useRouter()
+  const [ isLoading, setIsLoading ] = useState(false) 
+  const deleteRaffleData =  async (id : number) => {
+    setIsLoading(true);
+    console.log(typeof id, id)
+    try {
+  const token = user?.token_acesso;
+  const result = await api.delete(`/raffles/${id}`, {
+      headers: {
+          Authorization : `Bearer ${token}`
+      }
+    });
+    console.log(JSON.stringify(result.data))
+    router.back();
+    } catch (error) {
+     if(isAxiosError(error)){
+      Alert.alert('Erro ao deletar sorteio', 'Ops Algo deu errado');
+     }else{
+      Alert.alert('Erro ao deletar sorteio', 'Tente novamente mais tarde');
+     }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+ 
   return (
     <View className="p-4 bg-white rounded-lg  mb-4">    
       <Image
@@ -49,9 +78,17 @@ const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
         <Ionicons name="information-circle" size={24} color="gray" />
       <Text className="text-xl font-bold text-black ml-2">Descrição</Text>
         </View>
-       {user?.id === raffle.organizadorId && <TouchableOpacity style={{backgroundColor:'darkblue', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20}}>
-          <Text className="text-sm text-white">Editar</Text>
-        </TouchableOpacity>}
+       {user?.id === raffle.organizadorId &&<>
+       
+        <TouchableOpacity onPress={()=>{router.push({pathname: '/edit/edit_raffle', params: { id : raffle.id}})}}>
+          <Ionicons name="pencil" size={20} color="green" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>deleteRaffleData(raffle.id as number)}>
+          <Ionicons name="trash" size={20} color="red" />
+        </TouchableOpacity>
+       </> 
+        }
       </View>
       
       <View>

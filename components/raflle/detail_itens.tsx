@@ -11,7 +11,6 @@ interface ItemDetailProps {
 
 const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => {
   const { user } = useAuth();
-console.log(item.propriedades)
   // Verifica se o usuário está entre os inscritos
   const isUserSubscribed = useMemo(() => {
     return item.inscricoes?.some((inscricao) => inscricao.usuarioId === user?.id);
@@ -28,9 +27,10 @@ console.log(item.propriedades)
       {/* Propriedades */}
       <View className="mb-4 flex-row gap-4 flex-wrap">
         {Object.entries(item.propriedades).map(([key, value]) => (
-          <Text key={key} className="text-sm text-gray-500 mr-2">
-            {key}: {value}
-          </Text>
+          <View key={key} className="flex-row items-center gap-2 p-2 bg-gray-100 rounded-lg">
+            <Text className="text-sm text-gray-600 font-medium">{key}:</Text>
+            <Text className="text-sm text-gray-700">{value}</Text>
+          </View>
         ))}
       </View>
 

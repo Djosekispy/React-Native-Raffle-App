@@ -90,6 +90,7 @@ console.log(JSON.stringify(fetchedItens))
           Nenhum detalhe disponível para este sorteio.
         </Text>
       )}
+      <Text className="text-2xl my-2 text-center font-bold">Itens para Sorteio</Text>
     {categories && itens.length > 0 && itens.map((iten, index) => 
       (iten as any).category === selected && (
         <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={() => alert('Inscreveu-se')} />
