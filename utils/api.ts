@@ -4,4 +4,9 @@ const api = axios.create({
     baseURL: 'http://192.168.1.103:3000',
 });
 
-export { api };
+const apiAmin = axios.create({
+    baseURL: 'http://192.168.1.103:3000/admin',
+});
+
+
+export { api , apiAmin};

@@ -45,7 +45,7 @@ export default function MenuPage() {
                      <MenuItem
                         title="Candidaturas"
                         description="Veja suas candidaturas"
-                        link="/settings"
+                        link="/painel/candidates"
                     />
                    {user?.tipo_perfil === 'sorteador' && ( 
                        <>  

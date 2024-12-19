@@ -27,7 +27,6 @@ export default function ForgetPassword() {
     setIsLoading(true);
     try {
       const user = await authService.forgotPassword(data.email);
-      console.log(JSON.stringify(user));
       if('error' in user){
         setIsError(user.error);
       }else{

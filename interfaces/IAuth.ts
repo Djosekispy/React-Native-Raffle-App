@@ -8,7 +8,6 @@ const schemaRegister = yup.object({
       .required('Nome de usuário é obrigatório'),
     password: yup.string()
       .required('Senha é obrigatória')
-      .min(6, 'A senha deve ter no mínimo 6 caracteres'),
   });
   
   type FormDataRegister = yup.InferType<typeof schemaRegister>;

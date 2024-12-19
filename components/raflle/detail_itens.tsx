@@ -16,6 +16,7 @@ const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => 
     return item.inscricoes?.some((inscricao) => inscricao.usuarioId === user?.id);
   }, [item.inscricoes, user?.id]);
 
+  console.log(JSON.stringify(item))
   return (
     <View className="flex-1 bg-white px-4 pb-4 rounded-lg shadow-md">
       {/* Nome do Item */}

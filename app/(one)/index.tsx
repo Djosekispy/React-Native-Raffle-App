@@ -21,8 +21,29 @@ export default function DetailsPage() {
   const [raffle, setRaffle] = useState<IRaffle | null>(null);
   const [categories, setCategories] = useState([]);
   const [itens, setItens] = useState([]);
+  
 
   const onSelect = (id : number)=>SetSelected(id)
+  const onSubscribe = async(id : number)=>{
+   
+    try {
+      const response = await api.post(`/raffles/${raffle?.id}/participate`,{ ItemId : id},{
+        headers : {
+          Authorization : `Bearer ${user?.token_acesso}`
+        }
+      })
+      alert(response.data.message)
+    } catch (error) {
+      if(isAxiosError(error)){
+        console.log(JSON.stringify(error.response?.data))
+      }else{
+        console.log(error)
+      }
+    }
+
+
+
+  }
   const fetchRaffleDetails = async () => {
     setIsLoading(true);
     try {
@@ -47,10 +68,10 @@ export default function DetailsPage() {
           nome: item.nome,
           propriedades: item.propriedades,
           descricao: item.descricao,
+          inscricoes : item.inscricoes
         }))
       ) || [];
     setItens(fetchedItens);
-console.log(JSON.stringify(fetchedItens))
     } catch (error) {
       if (isAxiosError(error)) {
         console.error("Erro na API:", error.response?.data?.message || "Erro desconhecido");
@@ -93,7 +114,7 @@ console.log(JSON.stringify(fetchedItens))
       <Text className="text-2xl my-2 text-center font-bold">Itens para Sorteio</Text>
     {categories && itens.length > 0 && itens.map((iten, index) => 
       (iten as any).category === selected && (
-        <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={() => alert('Inscreveu-se')} />
+        <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={onSubscribe} />
       )
     )}
 <View className="mb-4">
