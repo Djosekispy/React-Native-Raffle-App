@@ -171,13 +171,13 @@ const AdminPanel: React.FC = () => {
                              </View>
                      
                              {/* Botão de Avaliar */}
-                             <TouchableOpacity
+                          { (inscricao.estado_candidatura as any) === 'pendente' && ( <TouchableOpacity
                                className="bg-green-400 p-3 rounded-md flex-row items-center justify-center"
-                            onPress={()=>analise(parseInt(String(inscricao.usuario?.id)), parseInt(String(item.id)) )}
+                            onPress={()=>analise(parseInt(String(inscricao.usuario?.id)), parseInt(String(inscricao.id)) )}
                              >
                                <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
                                <Text className="font-bold text-white ml-2">Avaliar candidatura</Text>
-                             </TouchableOpacity>
+                             </TouchableOpacity>)}
                            </View>
                          </View>
                       ))}

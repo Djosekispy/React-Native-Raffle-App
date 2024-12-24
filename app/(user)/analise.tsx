@@ -1,16 +1,26 @@
 
+import { useAuth } from "@/context";
 import { User } from "@/interfaces/user";
 import { api, apiAmin } from "@/utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, Modal, ScrollView, Linking } from "react-native";
+import { View, Text, Image, TouchableOpacity, Modal, ScrollView, Linking, ActivityIndicator } from "react-native";
+
+type EstadoCandidatura = {
+  Aproved : 'aprovado',
+   Recused : 'recusado'
+   Winner : 'ganho',
+   wait : 'pendente'
+ }
 
 const UserProfileView = () => {
   const [isImageModalVisible, setImageModalVisible] = useState(false);
  const [ usuario, setUsuario ] = useState<User>();
- const router = useRouter()
+ const router = useRouter();
+ const [isLoading, setIsLoading] = useState(false)
+ const { user } = useAuth();
  const {  usuarioId, itemId } = useLocalSearchParams();
   const openDocument = (documentUrl: string | undefined) => {
     if (documentUrl) {
@@ -26,13 +36,37 @@ const UserProfileView = () => {
     try {
         const response = await apiAmin.get(`users/${usuarioId}`);
         setUsuario(response.data)
-    console.log(JSON.stringify(response.data))
     } catch (error) {
         if(isAxiosError(error)){
             console.log(JSON.stringify(error.response?.data))
         }else{
             console.log(error)
         }
+    }
+  }
+
+  const updatecandidateStatus = async (status : string)=>{
+    setIsLoading(true)
+    try {
+      const data = {
+        inscricaoId : itemId,
+         status
+      }
+        const response = await api.post('/raffles/update-candidate',data, {
+          headers: {
+            Authorization: `Bearer ${user?.token_acesso}`,
+          },
+        });
+        alert(response.data.message)
+        router.back()
+    } catch (error) {
+        if(isAxiosError(error)){
+            console.log(JSON.stringify(error.response?.data))
+        }else{
+            console.log(error)
+        }
+    }finally{
+      setIsLoading(false)
     }
   }
 
@@ -85,13 +119,17 @@ const UserProfileView = () => {
    
 
       {/* Action Buttons */}
-      <View className="flex-row justify-between mt-6">
-        <TouchableOpacity className="bg-green-600 py-3 px-4 rounded flex-1 mr-2">
+      <View className="flex-col justify-center mt-6">
+       {isLoading ? <ActivityIndicator size={25} color='green' /> : 
+       <View className="flex-row justify-between"> 
+       <TouchableOpacity onPress={()=>updatecandidateStatus('aprovado')} className="bg-green-600 py-3 px-4 rounded flex-1 mr-2">
           <Text className="text-center text-white font-bold">Aprovar</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-red-600 py-3 px-4 rounded flex-1 ml-2">
+        <TouchableOpacity onPress={()=>updatecandidateStatus('recusado')} className="bg-red-600 py-3 px-4 rounded flex-1 ml-2">
           <Text className="text-center text-white font-bold">Reprovar</Text>
         </TouchableOpacity>
+        </View>
+        }
       </View>
 
       {/* Image Modal */}

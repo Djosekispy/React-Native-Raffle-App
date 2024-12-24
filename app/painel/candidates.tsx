@@ -83,14 +83,14 @@ export default function Candidate() {
                         </View>
                     </View>
                 {currentDate < drawDate ? (
-                    <TouchableOpacity
+                  item.estado_candidatura === 'pendente' && (  <TouchableOpacity
                         onPress={() => cancelSubscription(item.id)}
                         className="mt-4 bg-red-500 p-2 rounded"
                     >
                         <Text className="text-center text-white font-bold">
                             Cancelar Subscrição
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>)
                 ) :  (
                     <TouchableOpacity
                         className="mt-4 bg-green-500 p-2 rounded"
