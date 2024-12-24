@@ -10,7 +10,7 @@ type AuthContextData = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<User | { error : string }>;
-  register: (email: string, password: string, nome_completo: string, telefone: string) => Promise<User | { error : string }>;
+  register: (email: string, password: string, nome_completo: string) => Promise<User | { error : string }>;
   logout: () => void;
   replaceLocalUseData : ()=> Promise<User | { error : string }>;
   updateUser : (data : UserSchema) => Promise<User | { error : string }>;
@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, nome_completo: string, telefone: string) : Promise<User | { error : string }> => {
+  const register = async (email: string, password: string, nome_completo: string ) : Promise<User | { error : string }> => {
     try {
-      const user = await authService.register({ email, senha: password, nome_completo, telefone}); 
+      const user = await authService.register({ email, senha: password, nome_completo}); 
       if(user && 'error' in user){
         return { error : user.error}
       }

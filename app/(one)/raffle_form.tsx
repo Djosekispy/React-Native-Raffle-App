@@ -37,27 +37,26 @@ export default function CreateRaffle() {
   const { user } = useAuth();
   const router = useRouter();
   const [coverImage, setCoverImage] = useState< DocumentPicker.DocumentPickerAsset>();
-  const { control, handleSubmit, formState: { errors } } = useForm<RaffleFormData>({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<RaffleFormData>({
     resolver: yupResolver(raffleSchema),
     defaultValues: {
       nome: '',
-      cover: '',
-      data_realizacao: new Date,
       politicas: '',
+      data_realizacao: new Date(),
+      cover: '',
     },
   });
-
+  
   const onSubmit = async (data: RaffleFormData) => {
-    
-    if(!coverImage) {
-      Alert.alert('Carregamento de Imagem','Por favor selecione uma imagem de capa');
-      return ;
+    if (!coverImage) {
+      Alert.alert('Carregamento de Imagem', 'Por favor selecione uma imagem de capa');
+      return;
     }
+  
     setIsLoading(true);
     try {
-      // Simulação de envio
       data.cover = coverImage.uri || '';
-    /*  const formData = new FormData();
+      const formData = new FormData();
       formData.append('nome', data.nome);
       formData.append('politicas', data.politicas);
       formData.append('data_realizacao', data.data_realizacao.toISOString());
@@ -66,26 +65,27 @@ export default function CreateRaffle() {
         type: coverImage.mimeType,
         name: coverImage.name,
       } as unknown as Blob);
-*/
-  const token = user?.token_acesso;
-  const result = await api.put('/raffles', data, {
-      headers: {
-         'Content-Type': 'multipart/form-data',
-          Authorization : `Bearer ${token}`
-      }
-    });
-
-
-    console.log(JSON.stringify(result.data))
-      //router.push({pathname:'/painel/', params: {msg: 'Sorteio criado com sucesso!'}});
+  
+      const token = user?.token_acesso;
+      const result = await api.post('/raffles', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      reset(); 
+      setCoverImage(undefined); 
+      setSelectedDate(new Date()); 
+      router.push({pathname:'/painel/', params: {msg: 'Sorteio criado com sucesso!'}});
     } catch (error) {
-     if(isAxiosError(error)){
-      console.log(JSON.stringify(error));
-      Alert.alert('Erro ao criar sorteio', error.response?.data.error);
-     }else{
-      console.error(error);
-      Alert.alert('Erro ao criar sorteio', 'Tente novamente mais tarde');
-     }
+      if (isAxiosError(error)) {
+        console.log(JSON.stringify(error));
+        Alert.alert('Erro ao criar sorteio', error.response?.data.error);
+      } else {
+        console.error(error);
+        Alert.alert('Erro ao criar sorteio', 'Tente novamente mais tarde');
+      }
     } finally {
       setIsLoading(false);
     }

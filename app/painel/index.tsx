@@ -67,7 +67,6 @@ const AdminPanel: React.FC = () => {
           }))
         ) || [];
       setItens(fetchedItens);
-      console.log(JSON.stringify(fetchedItens))
       } catch (error) {
         if (isAxiosError(error)) {
           console.error("Erro na API:", error.response?.data?.message || "Erro desconhecido");
@@ -140,18 +139,45 @@ const AdminPanel: React.FC = () => {
 
     const renderInscritosView = () => (
       <View className="flex-1 bg-gray-100 p-4">
-          <Text className="text-xl font-bold mb-4">Inscritos do Sorteio</Text>
           <FlatList
               data={itens}
               keyExtractor={(item) => item.id?.toString() ?? '0'}
               renderItem={({ item }) => (
                   <React.Fragment>
                       {item.inscricoes?.map((inscricao) => (
-                          <View key={inscricao.id} className="bg-white p-4 rounded-lg shadow-sm mb-2">
-                              <Text className="text-lg font-bold">{inscricao.usuario?.nome_completo}</Text>
-                              <Text className="text-sm">{String(inscricao.estado_candidatura).toUpperCase()}</Text>
-                              <Text className="text-sm">{item.nome}</Text>
-                          </View>
+                           <View
+                           key={inscricao.id}
+                           className="bg-white p-4 rounded-lg shadow-md mb-3 flex-row items-center"
+                         >
+                           <View className="flex-1">
+                             {/* Nome do Usuário */}
+                             <View className="flex-row items-center mb-2">
+                               <Ionicons name="person-circle-outline" size={20} color="#4CAF50" />
+                               <Text className="text-lg font-bold ml-2">{inscricao.usuario?.nome_completo}</Text>
+                             </View>
+                     
+                             {/* Estado da Candidatura */}
+                             <View className="flex-row items-center mb-2">
+                               <Ionicons name="checkmark-done-outline" size={20} color="#FF9800" />
+                               <Text className="text-sm ml-2">{String(inscricao.estado_candidatura).toUpperCase()}</Text>
+                             </View>
+                     
+                             {/* Nome do Item */}
+                             <View className="flex-row items-center mb-4">
+                               <Ionicons name="pricetag-outline" size={20} color="#2196F3" />
+                               <Text className="text-sm ml-2">{item.nome}</Text>
+                             </View>
+                     
+                             {/* Botão de Avaliar */}
+                             <TouchableOpacity
+                               className="bg-green-400 p-3 rounded-md flex-row items-center justify-center"
+                            
+                             >
+                               <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+                               <Text className="font-bold text-white ml-2">Avaliar candidatura</Text>
+                             </TouchableOpacity>
+                           </View>
+                         </View>
                       ))}
                   </React.Fragment>
               )}
@@ -230,7 +256,7 @@ const AdminPanel: React.FC = () => {
                 <Text className="text-2xl font-bold text-gray-800 mb-2">Painel de gestão</Text>
             </View>
             {msg && (
-                <View className="bg-green-100 border border-green-500 p-4 mb-4 rounded">
+                <View className="bg-green-100 border border-green-500 p-2 m-4   rounded">
                     <Text className="text-green-500 text-center">{msg}</Text>
                 </View>
             )}

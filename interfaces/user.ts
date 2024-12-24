@@ -6,7 +6,7 @@ type User = {
     nome_completo: string;
     data_nascimento?: Date;
     email: string;
-    telefone: string;
+    telefone?: string;
     endereco?: string;
     senha: string;
     foto_perfil?: string;

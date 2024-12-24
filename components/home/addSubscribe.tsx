@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 
 const AdsSubscribe = () => {
   return (
-    <View className="relative bg-gray-100 rounded-lg shadow-md overflow-hidden ">
+    <View className="relative bg-gray-100 rounded-lg shadow-md overflow-hidden mb-12">
       {/* Imagem de Fundo */}
       <Image
         source={{ uri:  "https://picsum.photos/600/400" }}

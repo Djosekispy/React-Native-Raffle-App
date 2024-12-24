@@ -101,14 +101,14 @@ const HomePage = () => {
           />
           <ListaResultados
             filteredResults={avaliableRaffles}
-            label="Perto de Si"
+            label="Mais Recentes"
             goToDetails={goToDetails}
           />
         </>
       )}
 
       <AdsSubscribe  />
-      <ItensSorteio items={itens} />
+     
     </ScrollView>
   );
 };

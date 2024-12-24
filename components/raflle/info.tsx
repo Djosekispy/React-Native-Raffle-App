@@ -45,7 +45,7 @@ const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
                 style={{ aspectRatio: 1 / 1 }}
               />
       <View className="flex-row items-start  my-4">
-        <Text className="text-2xl font-bold text-gray-800 ml-2">{raffle?.nome}</Text>
+        <Text className="text-xl font-bold text-gray-800 ml-2">{raffle?.nome}</Text>
       </View>
 
       <View className="flex-row items-center justify-between  mb-2">
@@ -78,16 +78,16 @@ const RaffleInfo = ({ raffle }: { raffle: IRaffle}) => {
         <Ionicons name="information-circle" size={24} color="gray" />
       <Text className="text-xl font-bold text-black ml-2">Descrição</Text>
         </View>
-       {user?.id === raffle.organizadorId &&<>
+       {user?.id === raffle.organizadorId &&<View className="flex-row gap-2">
        
         <TouchableOpacity onPress={()=>{router.push({pathname: '/edit/edit_raffle', params: { id : raffle.id}})}}>
-          <Ionicons name="pencil" size={20} color="green" />
+          <Text className="bg-green-500 p-2 rounded">Editar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={()=>deleteRaffleData(raffle.id as number)}>
-          <Ionicons name="trash" size={20} color="red" />
+        <Text className="bg-red-500 p-2 rounded text-white">Apagar</Text>
         </TouchableOpacity>
-       </> 
+       </View> 
         }
       </View>
       

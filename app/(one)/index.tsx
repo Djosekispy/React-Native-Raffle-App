@@ -33,6 +33,7 @@ export default function DetailsPage() {
         }
       })
       alert(response.data.message)
+      await fetchRaffleDetails();
     } catch (error) {
       if(isAxiosError(error)){
         console.log(JSON.stringify(error.response?.data))
@@ -96,7 +97,7 @@ export default function DetailsPage() {
         <TouchableOpacity onPress={() => router.back()} className="ml-4">
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-3xl font-bold text-center flex-1">Detalhes do produto</Text>
+        <Text className="text-2xl font-bold text-center flex-1">Detalhes do produto</Text>
         <View className="w-6" />
       </View>
 
@@ -111,7 +112,14 @@ export default function DetailsPage() {
           Nenhum detalhe disponível para este sorteio.
         </Text>
       )}
-      <Text className="text-2xl my-2 text-center font-bold">Itens para Sorteio</Text>
+{String(raffle?.status) === 'finalizado' &&  <TouchableOpacity 
+  className="bg-[#FF7F50] text-white font-bold py-2 px-4 rounded"
+  onPress={()=>router.push({pathname: '/(user)/winners', params: { sorteioId : raffle?.id}})}
+  >
+  <Text className="text-lg text-white font-bold text-center">Ver Vencedores do diferentes itens</Text>
+</TouchableOpacity>
+}
+      <Text className="text-xl p-2 bg-green-300 my-2 text-center font-semibold">Itens em Sorteio</Text>
     {categories && itens.length > 0 && itens.map((iten, index) => 
       (iten as any).category === selected && (
         <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={onSubscribe} />
@@ -122,6 +130,7 @@ export default function DetailsPage() {
             <CategoryList categories={categories} selected={selected}  onSelect={onSelect} />
           )}
 </View>
+
 </View>
     </ScrollView>
   );

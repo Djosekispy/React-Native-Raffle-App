@@ -76,7 +76,3 @@ O Sorteio App foi desenvolvido com o propósito de democratizar e simplificar a 
 O projeto representa um importante avanço na modernização de processos de sorteio, oferecendo uma solução tecnológica para uma necessidade real do mercado, sempre priorizando a transparência, segurança e facilidade de uso.
 
 
-#nao pode se inscrever mais de uma vez no  mesmo item
-#não pode se inscrever a um sorteio já realizado
-#não pode aparecer os seortios já realizado
-#rota para alterar estado da candidatura

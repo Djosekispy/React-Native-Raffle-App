@@ -27,7 +27,7 @@ export default function Register() {
   const onSubmit = async (data: FormDataRegister) => {
     setIsLoading(true);
     try {
-     const user = await register(data.email, data.password, data.username, '00008999999');
+     const user = await register(data.email, data.password, data.username);
       if('error' in user){
         setIsError(user.error);
       }else{
