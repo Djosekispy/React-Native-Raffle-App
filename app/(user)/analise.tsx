@@ -46,7 +46,7 @@ const UserProfileView = () => {
 
       <View className='p-4 mt-4 flex-row justify-evenly items-center'>
         <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
-        <Text className='font-bold text-2xl text-black px-12 text-center my-4  py-2 rounded-2xl'>Avaliar candidato</Text>
+        <Text className='font-bold text-2xl text-black px-12 text-center my-4  py-2 rounded-2xl'>Avaliar candidato </Text>
       </View>
       <View className="bg-white p-4 rounded-lg shadow-md my-4">
         {/* Profile Image */}

@@ -31,7 +31,9 @@ const AdminPanel: React.FC = () => {
     const handleViewDetails = (id: string) => {
         router.push({ pathname: '/(one)/', params: { id } });
     };
-
+  const analise = (usuarioId : number, itemId : number)=>{
+    router.push({pathname: '/(user)/analise', params: {  usuarioId, itemId }})
+  }
     const handleViewInscritos = async (raffle: IRaffle) => {
       await fetchRaffleDetails(parseInt(String(raffle.id)))
         setView('inscritos');
@@ -171,7 +173,7 @@ const AdminPanel: React.FC = () => {
                              {/* Botão de Avaliar */}
                              <TouchableOpacity
                                className="bg-green-400 p-3 rounded-md flex-row items-center justify-center"
-                            
+                            onPress={()=>analise(parseInt(String(inscricao.usuario?.id)), parseInt(String(item.id)) )}
                              >
                                <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
                                <Text className="font-bold text-white ml-2">Avaliar candidatura</Text>

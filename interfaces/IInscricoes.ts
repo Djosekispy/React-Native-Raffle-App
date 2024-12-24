@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 type EstadoCandidatura = {
    Aproved : 'aprovado',
     Recused : 'recusado'
@@ -11,6 +13,7 @@ export interface IInscricoes {
     usuarioId: number;
     itemId: number;
     estado_candidatura: EstadoCandidatura;
+    usuario : User;
     createdAt?: Date;
     updatedAt?: Date;
 }
