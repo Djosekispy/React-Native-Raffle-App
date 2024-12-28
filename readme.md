@@ -1,78 +1,94 @@
-# Sorteio App
+# Sorteio App - Frontend
 
 ## Sobre o Projeto
 
-Este é um aplicativo de sorteios desenvolvido com React Native e Expo, focando na interface do usuário (frontend). O projeto permite aos usuários realizarem sorteios de forma simples e intuitiva.
+O **Sorteio App** é uma solução criada para simplificar e democratizar a realização de sorteios. Esta documentação refere-se exclusivamente ao **frontend** do projeto, desenvolvido com tecnologias modernas para oferecer uma experiência de usuário intuitiva e responsiva. O backend do projeto está disponível no repositório: [Sorteio Backend](https://github.com/Djosekispy/Sorteio.git).
+
+## Tecnologias Utilizadas
 
 ### Frontend
 
-O frontend foi desenvolvido utilizando as seguintes tecnologias:
+O frontend do aplicativo foi desenvolvido utilizando as seguintes tecnologias:
 
-- React Native
-- Expo
-- TypeScript
-- TailwindCSS para estilização
-- React Hook Form para gerenciamento de formulários
-- Yup para validação de dados
-- Expo Router para navegação
+- **React Native**: Para criar aplicações nativas para Android e iOS.
+- **Expo**: Para facilitar o desenvolvimento e a manutenção do aplicativo.
+- **TypeScript**: Para um código mais seguro e legível.
+- **TailwindCSS**: Para estilização rápida e responsiva.
+- **React Hook Form**: Para gerenciamento eficiente de formulários.
+- **Yup**: Para validação de dados.
+- **Expo Router**: Para navegação estruturada e dinâmica.
 
-### Funcionalidades Principais
+## Funcionalidades do Frontend
 
-- Sistema de autenticação completo
-- Login com email e senha
-- Integração com redes sociais (Google e Facebook)
-- Interface responsiva e moderna
-- Validação de formulários
-- Feedback visual para o usuário
+- **Sistema de Autenticação**:
+  - Login com email e senha.
+  - Integração com provedores como Google e Facebook.
+- **Interface de Usuário Moderna**:
+  - Design responsivo e intuitivo.
+  - Feedback visual claro para as interações do usuário.
+- **Formulários Validados**:
+  - Campos obrigatórios com validações claras usando Yup.
+- **Histórico de Sorteios**:
+  - Interface para exibir o histórico de sorteios realizados.
 
-### Backend
+## Como Executar o Frontend
 
-O backend do projeto foi implementado separadamente utilizando Node.js, fornecendo uma API RESTful para gerenciar:
+### Requisitos
 
-- Autenticação de usuários
-- Gerenciamento de sorteios
-- Armazenamento de dados
-- Regras de negócio
+- Node.js instalado.
+- Expo CLI configurado.
+- Emulador Android/iOS ou dispositivo físico.
 
-## Como Executar
+### Passos para Execução
 
-1. Clone o repositório
-2. Instale as dependências com `npm install`
-3. Execute o projeto com `npx expo start`
+1. **Clone o Repositório do Frontend**:
+   ```bash
+   git clone https://github.com/Djosekispy/React-Native-Raffle-App.git
+   cd sorteio-app
+   ```
 
-## Próximos Passos
+2. **Instale as Dependências**:
+   ```bash
+   npm install
+   ```
 
-- Implementação de mais funcionalidades de sorteio
-- Melhorias na interface do usuário
-- Integração com mais provedores de autenticação social
+3. **Inicie o Projeto**:
+   ```bash
+   npx expo start
+   ```
 
+4. **Execute no Dispositivo ou Emulador**:
+   - Escaneie o QR code com o Expo Go (Android/iOS).
+   - Ou inicie no emulador conectado.
 
-## Objetivo e Importância do Projeto
+## Backend
 
-O Sorteio App foi desenvolvido com o propósito de democratizar e simplificar a realização de sorteios, tornando o processo mais transparente, justo e acessível para todos. Em um mundo cada vez mais digital, a necessidade de ferramentas confiáveis para realização de sorteios cresce constantemente, seja para fins promocionais, educacionais ou recreativos.
+O backend do projeto, responsável pela lógica de negócios, autenticação e gerenciamento de sorteios, está disponível no repositório:
+[Sorteio Backend](https://github.com/Djosekispy/Sorteio.git).
 
-### Impacto Social
+## Contribuição
 
-- **Transparência**: O aplicativo garante a imparcialidade dos sorteios através de algoritmos verificáveis
-- **Acessibilidade**: Interface intuitiva que permite que qualquer pessoa realize sorteios de forma simples
-- **Inclusão Digital**: Contribui para a digitalização de processos tradicionalmente manuais
-- **Segurança**: Implementa práticas robustas de segurança para proteger a integridade dos sorteios
+Ficaremos felizes em receber contribuições para melhorar o projeto!
 
-### Diferencias Competitivos
+1. Faça um fork do repositório.
+2. Crie um branch para sua funcionalidade ou correção:
+   ```bash
+   git checkout -b minha-melhoria
+   ```
+3. Envie suas alterações:
+   ```bash
+   git commit -m "Adicionei minha funcionalidade"
+   git push origin minha-melhoria
+   ```
+4. Abra um Pull Request.
 
-- Sistema de autenticação robusto que garante a legitimidade dos usuários
-- Interface moderna e responsiva que proporciona excelente experiência em qualquer dispositivo
-- Algoritmos de sorteio verificáveis que garantem resultados verdadeiramente aleatórios
-- Integração com redes sociais para maior alcance e engajamento
+## Próximos Passos no Desenvolvimento
 
-### Benefícios para os Usuários
+- Adicionar novas opções de personalização nos sorteios.
+- Melhorar a interface com animações e feedbacks aprimorados.
+- Suporte multilíngue para ampliar o alcance.
 
-- Economia de tempo na organização de sorteios
-- Eliminação de suspeitas sobre a idoneidade do processo
-- Possibilidade de realizar sorteios remotamente
-- Histórico completo de sorteios realizados
-- Interface amigável que não requer conhecimentos técnicos
+---
 
-O projeto representa um importante avanço na modernização de processos de sorteio, oferecendo uma solução tecnológica para uma necessidade real do mercado, sempre priorizando a transparência, segurança e facilidade de uso.
-
+O **Sorteio App** é um projeto focado em oferecer uma solução acessível, moderna e transparente para a realização de sorteios. Faça parte dessa jornada! Caso precise de informações sobre o backend, visite o repositório oficial listado acima.
 
