@@ -36,12 +36,16 @@ class UserRepository implements UserRepositoryInterface {
     update = async (user: IUserWithDoc): Promise<{ success: boolean; error?: string }> => {
         try {
             const jsonValue = JSON.stringify(user);
+            await this.delete();
             await AsyncStorage.setItem('user', jsonValue);
             return { success: true };
         } catch (e) {
             return { success: false, error: 'Erro ao atualizar o usuário: ' + e };
         }
     }
+
+   
+      
 }
 
 const userRepository = new UserRepository();

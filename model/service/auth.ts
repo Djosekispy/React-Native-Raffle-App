@@ -117,7 +117,6 @@ class AuthService {
     update = async (data:UserSchema) : Promise<IUserWithDoc | null | { error: string }>=>{
         try {
             
-            console.log("Fazendo A Requisição",JSON.stringify(data))
             const request = await api.put('/update', data,{
                 headers: {
                     Authorization : `Bearer ${data.token_acesso}`
@@ -145,11 +144,12 @@ class AuthService {
                 uri: data.uri,
                 type: data.mimeType,
                 name: data.name,
-            } as any)
+            } as any) 
+            const tokenDeAcesso = await this.getUser();
             const request = await api.put('/users/photo', formData,{
                 headers: {
                  "Content-Type":"multipart/form-data",
-                    Authorization : `Bearer ${token}`
+                    Authorization : `Bearer ${tokenDeAcesso?.token_acesso}`
                 }
             });
                 const updateUser = await this.userRepository.update(request.data?.user);

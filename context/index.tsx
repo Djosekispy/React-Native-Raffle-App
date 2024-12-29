@@ -8,7 +8,7 @@ import { createContext, useState, useContext, ReactNode, useEffect } from 'react
 
 
 type AuthContextData = {
-  user: User | null;
+  user: IUserWithDoc | User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<User | { error : string }>;
   register: (email: string, password: string, nome_completo: string) => Promise<User | { error : string }>;
@@ -64,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = async(data : UserSchema):  Promise<User | { error : string }> =>{
     try {
+ 
       const user = await authService.update(data)
      
     console.log('User', JSON.stringify(user))

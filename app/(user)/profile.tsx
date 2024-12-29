@@ -1,6 +1,6 @@
 import ProfileHeader from '@/components/userPage/ProfileHeader';
 import React, { useState } from 'react';
-import { View, Text, ScrollView,  RefreshControl, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView,  RefreshControl, SafeAreaView, TouchableOpacity } from 'react-native';
 import {useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/context';
 import { useForm } from 'react-hook-form';
@@ -8,17 +8,23 @@ import { User } from '@/interfaces/user';
 import FormProfile from '@/components/userPage/formProfile';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from 'expo-linking';
 const ProfileScreen = () => {
     const { user, logout,replaceLocalUseData } = useAuth();
     const [refreshing, setRefreshing] = React.useState(false);
     const router = useRouter();
+    const [editForm, setEditForm ] = useState<number>(1)
     const { sucess } = useLocalSearchParams<{sucess : string}>()
     const { control, handleSubmit, formState: { errors } } = useForm<User>({
       defaultValues: {
        ...user
       },
     });
+
+    const handleOpenPDF = async (url : string) => {
+        const response = await Linking.openURL(url);
+    };
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(async () => {
@@ -51,6 +57,16 @@ const ProfileScreen = () => {
                    </View>
                )}
               
+            <View className='flex-row gap-4 justify-center items-center my-2'>
+              <TouchableOpacity onPress={()=>setEditForm(1)} className={` p-2 rounded-md  ${editForm === 1 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Dados Pessoais</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=>setEditForm(2)} className={` p-2 rounded-md  ${editForm === 2 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Documentos de Identificação</Text>
+              </TouchableOpacity>
+            </View>
+
+            { editForm === 1  && <View>
 { control._defaultValues.nome_completo && <FormProfile label='Nome Completo' name={control._defaultValues.nome_completo as string}/>}
 { control._defaultValues.email && <FormProfile label='Email' name={control._defaultValues.email as string}/>}
 { control._defaultValues.telefone && <FormProfile label='Telefone' name={control._defaultValues.telefone as string}/>}
@@ -59,14 +75,68 @@ const ProfileScreen = () => {
 { control._defaultValues.numero_bilhete && <FormProfile label='Número de Bilhete de Identidade' name={control._defaultValues.numero_bilhete as string}/>}
 { control._defaultValues.sexo && <FormProfile label='Gênero' name={control._defaultValues.sexo as string}/>}
 { control._defaultValues.estado_civil && <FormProfile label='Estado Civil' name={control._defaultValues.estado_civil as string}/>}
+</View>
+}
              </View>
         
+             { editForm === 2  && 
+            <View className="flex-1 mx-4 mt-8">
+
+          <TouchableOpacity 
+            className="bg-gray-200 p-2 rounded-lg mb-4 flex-row justify-between items-center"
+            disabled={!((user as any).documentos.length > 0 && (user as any).documentos[0].licenca)}
+            onPress={() => handleOpenPDF((user as any).documentos[0]?.licenca)}>
+                <Text className="text-gray-700 font-medium text-lg">Licença Profissional</Text>
+                <Text className="text-gray-700">{(user as any).documentos.length > 0 && 
+                      ( 
+                        (user as any).documentos[0].licenca ? 
+                        <Text className="text-gray-700">
+                      <Ionicons name='download' size={24}/>
+                    </Text> :  <Text>Carregue sua Licença Profissional</Text>
+                    
+                  )
+                    }
+                    </Text>
+                    
+                </TouchableOpacity>
+
+                <TouchableOpacity className="bg-gray-200 p-2 rounded-lg mb-4 flex-row justify-between items-center"
+                 disabled={!((user as any).documentos.length > 0 && (user as any).documentos[0].nif) } 
+                 onPress={() => handleOpenPDF((user as any).documentos[0].nif)}>
+                <Text className="text-gray-700 text-lg  font-medium">Número de Identificação Fiscal</Text>
+                <Text className="text-gray-700">{(user as any).documentos.length > 0 && 
+                      ( 
+                        (user as any).documentos[0].nif ? 
+                        <Text className="text-gray-700">
+                      <Ionicons name='download' size={24}/>
+                    </Text> :  <Text>Carregue seu  Número de Contribuinte</Text>
+                    
+                  )
+                    }
+                    </Text>
+                    
+                </TouchableOpacity>
+
+                <TouchableOpacity className="bg-gray-200 p-2 rounded-lg mb-4 flex-row justify-between items-center" 
+                disabled={!((user as any).documentos.length > 0 && (user as any).documentos[0].bilheteUrl) } 
+                onPress={() => handleOpenPDF((user as any).documentos[0].bilheteUrl)}>
+                <Text className="text-gray-700 text-lg  font-medium">Bilhete de Identidade</Text>
+                    <Text className="text-gray-700">{(user as any).documentos.length > 0 && 
+                      ( 
+                        (user as any).documentos[0].bilheteUrl ? 
+                        <Text className="text-gray-700">
+                      <Ionicons name='download' size={24}/>
+                    </Text> :  <Text>Carregue seu  Bilhete</Text>
+                    
+                  )
+                    }
+                    </Text>
+                    
+                </TouchableOpacity>
+            </View>
+}
         </View>
-        <View className="flex-1 items-center justify-center bg-gray-200 py-4">
-            <Text className="text-gray-700 text-center">
-                © 2023 Todos os direitos reservados.
-            </Text>
-        </View>
+       
         </ScrollView>
         </SafeAreaView>
         </SafeAreaProvider>

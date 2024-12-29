@@ -51,7 +51,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, email, image,onRefr
         setIsLoading(true)
         setError('')
         try {
-           const result = await authService.updateProfileImage(imageFile as DocumentPicker.DocumentPickerAsset,user?.token_acesso);
+           const result = await authService.updateProfileImage(imageFile as DocumentPicker.DocumentPickerAsset,user?.token_acesso as string);
            if( result && 'error' in result){
             setError(result.error)
             if(!result.error){
@@ -79,15 +79,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, email, image,onRefr
         <View className="p-5 bg-gray-100 border-b border-gray-300 flex flex-row gap-4 items-center mb-4">
             <View className="mr-4 relative">
                 <Image
-                    source={{uri : image ? image : (isImage ? isImage : userAvatar)}}
-                    style={{ width: 80, height: 80, borderRadius: 50 }}
+                    source={{uri : imageFile ? imageFile.uri : (image ? image : userAvatar)}}
+                    style={{ width: 60, height: 60, borderRadius: 50 }}
                 />
                 <TouchableOpacity disabled={isLoading} style={{ position: 'absolute', bottom: 0, right: 0 }} onPress={pickerDocument}>
               {isLoading ? <ActivityIndicator size={24} color='red' />  : <MaterialIcons name="published-with-changes" size={24} color="black" />}
                 </TouchableOpacity>
             </View>
             <View>
-                <Text className="text-2xl font-bold">{name}
+                <Text className="text-xl font-bold">{name}
                     <Link href='/(user)/edit' asChild>
                     
                     <Text className="text-gray-700">{'\u270E'}</Text>
@@ -108,7 +108,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, email, image,onRefr
              disabled={isLoading} 
              onPress={onSubmit}
              style={{backgroundColor: '#212627'}}
-             className="bg-[#212627] p-3 mt-4 rounded-lg hover:bg-blue-700 active:bg-blue-800"
+             className="bg-[#212627] p-3 mt-4 rounded-lg hover:bg-blue-700 active:bg-blue-800 mx-4"
              >
                 <Text className='text-white text-lg text-center font-bold'>Atualizar imagem</Text>
             </TouchableOpacity>

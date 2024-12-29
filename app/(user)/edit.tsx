@@ -16,7 +16,7 @@ import { api } from '@/utils/api';
 import { isAxiosError } from 'axios';
 
 const EditProfileScreen = () => {
-    const { user, updateUser } = useAuth();
+    const { user, updateUser , replaceLocalUseData} = useAuth();
     const [isError, setIsError] = useState('');
     const [editForm, setEditForm ] = useState<number>(1)
     const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,8 @@ const EditProfileScreen = () => {
     const onSubmitPersonalData = async (data: UserSchema) => {
         setIsLoading(true);
         try {
-            const user = await updateUser(data);
+          const { documentos,updatedAt, ...rest } =  data
+           const user = await updateUser(rest);
             if ('error' in user) {
                 setIsError(user.error);
             } else {
@@ -51,7 +52,7 @@ const EditProfileScreen = () => {
 
     const handleFileUpload = async (field: keyof typeof uploadedDocs) => {
         try {
-            const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+            const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
             if (!result.canceled) {
                 setUploadedDocs({ ...uploadedDocs, [field]: result.assets[0] });
             }
@@ -63,28 +64,53 @@ const EditProfileScreen = () => {
     const onSubmitDocuments = async () => {
       setIsUploading(true);
       const formData = new FormData();
-    
-      if (uploadedDocs.licenca) formData.append('licenca', uploadedDocs.licenca);
-      if (uploadedDocs.nif) formData.append('nif', uploadedDocs.nif);
-      if (uploadedDocs.bilhete) formData.append('bilheteUrl', uploadedDocs.bilhete);
-    
-      // Inspeciona o conteúdo do FormData
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-    
+
+    if(uploadedDocs.licenca) {
+      formData.append('licenca', {
+        uri: (uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset ).uri,
+        type: (uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset ).mimeType,
+        name: (uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset ).name,
+         } as any);
+    }
+
+    if(uploadedDocs.nif) {
+      formData.append('nif', {
+        uri: (uploadedDocs.nif as DocumentPicker.DocumentPickerAsset ).uri,
+        type: (uploadedDocs.nif as DocumentPicker.DocumentPickerAsset ).mimeType,
+        name: (uploadedDocs.nif as DocumentPicker.DocumentPickerAsset ).name,
+         } as any);
+    }
+    if(uploadedDocs.bilhete ) {
+      formData.append('bilheteUrl', {
+        uri: (uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset ).uri,
+        type: (uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset ).mimeType,
+        name: (uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset ).name,
+         } as any);
+    }
       try {
-        const response = await api.post('/user/document', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${user?.token_acesso}`,
-          },
-        });
-        console.log(response.data); 
+       if(( user as any).documentos.length > 0){
+          const response = await api.put(`/users/${user?.id}/document`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${user?.token_acesso}`,
+            },
+          });
+          
+        Alert.alert('Mensagem',response.data.message)
+        }else{
+          const response = await api.post('/users/document', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${user?.token_acesso}`,
+            },
+          });
+          Alert.alert('Mensagem',response.data.message)
+        }
+        await replaceLocalUseData();
       } catch (error) {
         if (isAxiosError(error)) {
           console.log(JSON.stringify(error.response?.data)); 
-          Alert.alert('Erro', error.response?.data?.error || 'Erro desconhecido.');
+          Alert.alert('Erro', error.response?.data?.message || 'Erro desconhecido.');
         } else {
           console.error(error);
           Alert.alert('Erro', 'Ocorreu um problema ao enviar os documentos.');
@@ -103,8 +129,9 @@ const EditProfileScreen = () => {
                     Atualizar dados pessoais
                 </Text>
             </View>
-
-            <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
+      <View className=' mx-4'>
+      <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
+      </View>
 
             <View className='flex-row gap-4 justify-center items-center my-2'>
               <TouchableOpacity onPress={()=>setEditForm(1)} className={` p-2 rounded-md  ${editForm === 1 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
@@ -115,7 +142,6 @@ const EditProfileScreen = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Seção de Dados Pessoais   */}
          { editForm === 1  &&  <View className="flex-1 mx-4">
                
                 <View className="my-4">
@@ -227,26 +253,30 @@ const EditProfileScreen = () => {
                 </View>
             </View>}
 
-            {/* Seção de Documentos */}
             { editForm === 2  && 
             <View className="flex-1 mx-4 mt-8">
-                <Text className="font-bold text-lg text-black mb-4">Envio de Documentos</Text>
 
                 <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('licenca')}>
-                    <Text className="text-gray-700">{uploadedDocs.licenca ? `Licença: ${(uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset).name}` : 'Carregar Licença'}</Text>
+                
+                <Text className="text-gray-700 text-sm my-4 font-medium">Licença Profissional</Text>
+                    <Text className="text-gray-700">
+                    {uploadedDocs.licenca ? `Licença: ${(uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset).name}` : ((user as any).documentos.length > 0 ? (user as any).documentos[0].licenca : 'Carregar Licença') }
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('nif')}>
-                    <Text className="text-gray-700">{uploadedDocs.nif ? `NIF: ${(uploadedDocs.nif as  DocumentPicker.DocumentPickerAsset).name}` : 'Carregar NIF'}</Text>
+                <Text className="text-gray-700 text-sm my-4 font-medium">Número de Identificação Fiscal</Text>
+                    <Text className="text-gray-700">{uploadedDocs.nif ? `NIF: ${(uploadedDocs.nif as  DocumentPicker.DocumentPickerAsset).name}` : ((user as any).documentos.length > 0 ? (user as any).documentos[0].nif : 'Carregar NIF')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('bilhete')}>
-                    <Text className="text-gray-700">{uploadedDocs.bilhete ? `Bilhete: ${(uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset).name}` : 'Carregar Bilhete'}</Text>
+                <Text className="text-gray-700 text-sm my-4 font-medium">Bilhete de Identidade</Text>
+                    <Text className="text-gray-700">{uploadedDocs.bilhete ? `Bilhete: ${(uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset).name}` : ((user as any).documentos.length > 0 ? (user as any).documentos[0].bilheteUrl : 'Carregar Bilhete')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     disabled={isUploading}
-                    className="bg-[#FF7F50] py-3 mt-4 rounded-lg"
+                    className="bg-[#FF7F50] py-3 my-4 rounded-lg"
                     onPress={onSubmitDocuments}
                 >
                     {isUploading ? <ActivityIndicator size={30} color="#fff" /> : <Text className="text-white text-center font-semibold text-xl">Enviar Documentos</Text>}
