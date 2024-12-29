@@ -11,6 +11,7 @@ import CategoryList from "@/components/raflle/category";
 import { ICategoria } from "@/interfaces/ICategory";
 import { IItens } from "@/interfaces/IItens";
 import ItemDetail from "@/components/raflle/detail_itens";
+import Comments from "@/components/raflle/comments";
 
 export default function DetailsPage() {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ export default function DetailsPage() {
   const [raffle, setRaffle] = useState<IRaffle | null>(null);
   const [categories, setCategories] = useState([]);
   const [itens, setItens] = useState([]);
-  
+  const [editForm, setEditForm ] = useState<number>(1)
 
   const onSelect = (id : number)=>SetSelected(id)
   const onSubscribe = async(id : number)=>{
@@ -119,17 +120,32 @@ export default function DetailsPage() {
   <Text className="text-lg text-white font-bold text-center">Ver Vencedores do diferentes itens</Text>
 </TouchableOpacity>
 }
-      <Text className="text-xl p-2 bg-green-300 my-2 text-center font-semibold">Itens em Sorteio</Text>
-    {categories && itens.length > 0 && itens.map((iten, index) => 
+<View className='flex-row gap-4 justify-center items-center my-2'>
+              <TouchableOpacity onPress={()=>setEditForm(1)} className={` p-2 rounded-md  ${editForm === 1 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Items em sorteio</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=>setEditForm(2)} className={` p-2 rounded-md  ${editForm === 2 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Avaliações e Críticas</Text>
+              </TouchableOpacity>
+            </View>
+
+    { editForm === 1 && <> 
+   { categories && itens.length > 0 && itens.map((iten, index) => 
       (iten as any).category === selected && (
         <ItemDetail key={index} item={iten} owner={raffle?.organizadorId} onSubscribe={onSubscribe} />
       )
     )}
-<View className="mb-4">
+    <View className="mb-4">
 {categories.length > 0 && (
             <CategoryList categories={categories} selected={selected}  onSelect={onSelect} />
           )}
-</View>
+</View> 
+</>
+    
+    }
+
+{ editForm === 2 &&  <Comments id={parseInt(String(id))} /> }
+
 
 </View>
     </ScrollView>

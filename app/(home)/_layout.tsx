@@ -1,10 +1,11 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, StatusBar } from "react-native";
 
 export default function HomeLayout() {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                <StatusBar backgroundColor='transparent' translucent barStyle='dark-content' />
             <Tabs
                 screenOptions={{
                     headerShown: false,

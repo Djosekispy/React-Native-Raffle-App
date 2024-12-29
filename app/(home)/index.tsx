@@ -8,9 +8,7 @@ import ListaResultados from '@/components/home/itensrsult';
 import CategoriesList from '@/components/home/categories';
 import ImageCarousel from '@/components/home/carrosel';
 import TopMenu from '@/components/home/topMenu';
-import BannerPublicidade from '@/components/home/publicity';
 import AdsSubscribe from '@/components/home/addSubscribe';
-import { ItensSorteio } from '@/components/home/raffleItens';
 import { isAxiosError } from 'axios';
 
 const HomePage = () => {
@@ -21,11 +19,6 @@ const HomePage = () => {
   const [images, setImages] = useState<string[]>([]);
   
   const router = useRouter();
-
-  const itens = Array.from({ length: 10 }, (_, index) => ({
-    id: index,
-    title: `item${index}`,
-  }));
 
   const goToDetails = (id : number) => {
     router.push({pathname: '/(one)/', params: {id}});
@@ -41,10 +34,8 @@ const HomePage = () => {
       });
       const raffles = response.data.result;
 
-      // Update raffles
       setAvaliableRaffles(raffles);
 
-      // Extract unique categories and images
       const categoriesSet = new Map();
       const imageList: string[] = [];
 

@@ -62,14 +62,9 @@ export default function MenuPage() {
                        </>
                    )}
                     <MenuItem
-                        title="Feedback"
-                        description="Envie suas sugestões ou reclamações"
-                        link="/search"
-                    />
-                    <MenuItem
                         title="Caixa de Notificações"
                         description="Veja seu histórico de sorteio"
-                        link="/settings"
+                        link="/(user)/notifications"
                     />
 
                 </View>

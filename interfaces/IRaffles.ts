@@ -14,10 +14,10 @@ interface IRaffle {
     categorias? : ICategoria[]
 }
 
-type StatusRaffle = {
-    now: 'corrente',
-    canceled: 'cancelado',
-    finished: 'finalizado'
+enum StatusRaffle  {
+    now = 'corrente',
+    canceled = 'cancelado',
+    finished = 'finalizado'
 }
 
 export { IRaffle,StatusRaffle }

@@ -1,7 +1,8 @@
-import { useAuth } from '@/context';
-import { IItens } from '@/interfaces/IItens';
-import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useMemo } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useAuth } from "@/context";
+import { IItens } from "@/interfaces/IItens";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface ItemDetailProps {
   item: IItens;
@@ -9,53 +10,149 @@ interface ItemDetailProps {
   onSubscribe: (itemId: number) => void;
 }
 
-const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe , owner}) => {
+const ItemDetail: React.FC<ItemDetailProps> = ({ item, onSubscribe, owner }) => {
   const { user } = useAuth();
+
   // Verifica se o usuário está entre os inscritos
   const isUserSubscribed = useMemo(() => {
     return item.inscricoes?.some((inscricao) => inscricao.usuarioId === user?.id);
   }, [item.inscricoes, user?.id]);
 
-  console.log(JSON.stringify(item))
   return (
-    <View className="flex-1 bg-white px-4 pb-4 rounded-lg shadow-md">
+    <View style={styles.container}>
       {/* Nome do Item */}
-      <Text className="text-xl font-bold text-gray-800 mb-2">{item.nome}</Text>
+      <View style={styles.header}>
+        <Text style={styles.itemName}>{item.nome}</Text>
+        <Ionicons name="pricetag-outline" size={24} color="#FF7F50" />
+      </View>
 
       {/* Descrição */}
-      <Text className="text-base text-gray-600 mb-4">{item.descricao}</Text>
+      <Text style={styles.description}>{item.descricao}</Text>
 
       {/* Propriedades */}
-      <View className="mb-4 flex-row gap-4 flex-wrap">
+      <View style={styles.properties}>
         {Object.entries(item.propriedades).map(([key, value]) => (
-          <View key={key} className="flex-row items-center gap-2 p-2 bg-gray-100 rounded-lg">
-            <Text className="text-sm text-gray-600 font-medium">{key}:</Text>
-            <Text className="text-sm text-gray-700">{value}</Text>
+          <View key={key} style={styles.property}>
+            <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={18} color="#FF7F50" />
+            <Text style={styles.propertyText}>
+              <Text style={styles.propertyKey}>{key}:</Text> {value}
+            </Text>
           </View>
         ))}
       </View>
 
       {/* Total de Inscritos */}
-      <Text className={`text-base font-bold ${item.inscricoes && item.inscricoes?.length > 0 ? 'text-green-600' : 'text-red-600'} mb-4`}>
-        Total de Inscritos: {item.inscricoes?.length || 0}
-      </Text>
+      <View style={styles.subscribers}>
+        <Ionicons
+          name="people-outline"
+          size={20}
+          color={item.inscricoes && item.inscricoes.length > 0 ? "#28a745" : "#dc3545"}
+        />
+        <Text
+          style={[
+            styles.subscriberText,
+            { color: item.inscricoes && item.inscricoes.length > 0 ? "#28a745" : "#dc3545" },
+          ]}
+        >
+          Total de Inscritos: {item.inscricoes?.length || 0}
+        </Text>
+      </View>
 
       {/* Botão de Inscrição */}
-      {owner !== user?.id && (!isUserSubscribed ? (
-        <TouchableOpacity
-          className="bg-[#FF7F50] rounded-md p-4 mb-12"
-          onPress={() => onSubscribe(item.id!)}
-        >
-          <Text className="text-white text-lg text-center font-medium">Tornar-se participante</Text>
-        </TouchableOpacity>
-      ) : (
-        <Text className="text-green-600 italic">Você já está inscrito!</Text>
-      ))
-      
-      }
-
+      {owner !== user?.id &&
+        (!isUserSubscribed ? (
+          <TouchableOpacity style={styles.subscribeButton} onPress={() => onSubscribe(item.id!)}>
+            <Text style={styles.subscribeButtonText}>Tornar-se participante</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.alreadySubscribed}>
+            <Ionicons name="checkmark-circle-outline" size={20} color="#28a745" />
+            <Text style={styles.alreadySubscribedText}>Você já está inscrito!</Text>
+          </View>
+        ))}
     </View>
   );
 };
 
 export default ItemDetail;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 16,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  itemName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  description: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 12,
+  },
+  properties: {
+    marginBottom: 16,
+  },
+  property: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  propertyText: {
+    fontSize: 14,
+    color: "#555",
+    marginLeft: 8,
+  },
+  propertyKey: {
+    fontWeight: "bold",
+    color: "#333",
+  },
+  subscribers: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  subscriberText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  subscribeButton: {
+    backgroundColor: "#FF7F50",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subscribeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  alreadySubscribed: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  alreadySubscribedText: {
+    fontSize: 14,
+    color: "#28a745",
+    marginLeft: 8,
+    fontStyle: "italic",
+  },
+});

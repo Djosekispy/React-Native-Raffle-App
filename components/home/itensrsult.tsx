@@ -19,7 +19,6 @@ const ListaResultados = ({ filteredResults , label, goToDetails}: { filteredResu
   const itemsPerPage = 16;
   const router = useRouter();
 
-  // Dados paginados ou completos, dependendo do estado
   const paginatedData = isExpanded
     ? filteredResults
     : filteredResults.slice(0, currentPage * itemsPerPage);
@@ -30,9 +29,8 @@ const ListaResultados = ({ filteredResults , label, goToDetails}: { filteredResu
 
   return (
     <View>
-      {/* Título com botão Ver Mais/Menos */}
       <View className="flex-row justify-between items-center my-6">
-        <Text className="text-2xl font-bold text-gray-800">{label}</Text>
+        <Text className="text-xl font-bold text-gray-800">{label}</Text>
         <TouchableOpacity
           onPress={handleToggleView}
           className="flex-row items-center"
@@ -48,14 +46,14 @@ const ListaResultados = ({ filteredResults , label, goToDetails}: { filteredResu
         </TouchableOpacity>
       </View>
 
-      {/* Lista de resultados */}
       <FlatList
         data={paginatedData}
+        ListEmptyComponent={()=><Text>Sem Resultados</Text>}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         renderItem={({ item }) => (
           <View key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden mb-4 w-[48%]">
-            {/* Imagem */}
+            
             <View className="relative">
               <Image
                 source={{ uri: item.cover }}
@@ -64,15 +62,12 @@ const ListaResultados = ({ filteredResults , label, goToDetails}: { filteredResu
                 style={{ aspectRatio: 1 / 1 }}
               />
 
-              {/* Categoria */}
-              {/* Total de Inscritos */}
               <View className="absolute top-2 right-2 bg-black text-white text-xs font-medium py-1 px-2 rounded flex-row items-center">
                 <Ionicons name="ticket" size={12} color="white" />
                 <Text className="ml-1 text-white">{item.categorias.length || "00"}</Text>
               </View>
             </View>
 
-            {/* Conteúdo */}
             <View className="p-4">
               <Text
                 onPress={() => goToDetails(item.id)}
