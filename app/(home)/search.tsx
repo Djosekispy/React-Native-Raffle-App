@@ -137,6 +137,12 @@ const RaffleSearchView = () => {
 <FlatList
   showsVerticalScrollIndicator={false}
   data={filteredResults}
+  ListEmptyComponent={() => (
+    <View className="flex-1 justify-center items-center">
+      <Ionicons name="search" size={64} color="gray" className="mb-4" />
+      <Text className="text-center font-medium text-xl text-gray-600">Faça a sua busca</Text>
+    </View>
+  )} 
   keyExtractor={(item) => String(item.id)}
   numColumns={2} 
   columnWrapperStyle={{

@@ -1,3 +1,4 @@
+import { IItens } from "./IItens";
 import { User } from "./user";
 
 type EstadoCandidatura = {
@@ -14,6 +15,7 @@ export interface IInscricoes {
     itemId: number;
     estado_candidatura: EstadoCandidatura;
     usuario : User;
+    item ? : IItens;
     createdAt?: Date;
     updatedAt?: Date;
 }
