@@ -1,16 +1,12 @@
 import ProfileHeader from '@/components/userPage/ProfileHeader';
-import UserInfo from '@/components/userPage/UserInfo';
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, RefreshControl, SafeAreaView } from 'react-native';
-import Button from '@/components/userPage/Button';
-import { Link, router, useLocalSearchParams, useRouter } from 'expo-router';
+import { View, Text, ScrollView,  RefreshControl, SafeAreaView } from 'react-native';
+import {useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/context';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { User } from '@/interfaces/user';
-import { FormInput } from '@/components/loginForm/loginInput';
 import FormProfile from '@/components/userPage/formProfile';
-import { AntDesign, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const ProfileScreen = () => {
@@ -18,7 +14,6 @@ const ProfileScreen = () => {
     const [refreshing, setRefreshing] = React.useState(false);
     const router = useRouter();
     const { sucess } = useLocalSearchParams<{sucess : string}>()
-    const [ isError, setIsError ] = useState('');
     const { control, handleSubmit, formState: { errors } } = useForm<User>({
       defaultValues: {
        ...user

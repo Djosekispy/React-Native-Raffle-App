@@ -8,36 +8,51 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
-
-const { width } = Dimensions.get('window');
+import imageDefault from '../../assets/images/default.png';
+const { width, height: screenHeight } = Dimensions.get('window');
 
 interface ImageCarouselProps {
-  images: string[]; // Lista de URLs das imagens
+  images: string[];
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const flatListRef = useRef<FlatList<string>>(null);
 
-  // Rotação automática do carrossel
   useEffect(() => {
+    if (images.length === 0) return;
+
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % images.length;
-      setCurrentIndex(nextIndex);
       flatListRef.current?.scrollToIndex({
-        index: nextIndex,
+        index: Math.min(nextIndex, images.length - 1),
         animated: true,
       });
-    }, 5000); // Troca a cada 5 segundos
+      setCurrentIndex(nextIndex);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [currentIndex, images.length]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.floor(contentOffsetX / width);
-    setCurrentIndex(index);
+    const index = Math.round(contentOffsetX / width);
+    if (index >= 0 && index < images.length) {
+      setCurrentIndex(index);
+    }
   };
+
+  if (images.length === 0) {
+    return (
+      <View style={[styles.imageContainer, { height: screenHeight * 0.3 }]}>
+        <Image
+          source={imageDefault}
+          style={styles.image}
+          resizeMode="center"
+        />
+      </View>
+    );
+  }
 
   const renderItem = ({ item }: { item: string }) => (
     <View style={styles.imageContainer}>
@@ -57,7 +72,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScroll}
       />
-      {/* Indicador de paginação */}
       <View style={styles.pagination}>
         {images.map((_, index) => (
           <View
@@ -81,7 +95,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200, // Altura do carrossel
+    height: screenHeight * 0.3,
   },
   pagination: {
     flexDirection: 'row',

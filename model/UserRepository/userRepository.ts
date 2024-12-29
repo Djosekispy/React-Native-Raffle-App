@@ -1,6 +1,7 @@
 import { User } from "@/interfaces/user";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserRepositoryInterface from "./IUserRepository";
+import { IUserWithDoc } from "@/interfaces/IUserWithDoc";
 
 class UserRepository implements UserRepositoryInterface {
 
@@ -14,7 +15,7 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
-    get = async (): Promise<User | null> => {
+    get = async (): Promise<IUserWithDoc | null> => {
         try {
             const jsonValue = await AsyncStorage.getItem('user');
             return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -32,7 +33,7 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
-    update = async (user: User): Promise<{ success: boolean; error?: string }> => {
+    update = async (user: IUserWithDoc): Promise<{ success: boolean; error?: string }> => {
         try {
             const jsonValue = JSON.stringify(user);
             await AsyncStorage.setItem('user', jsonValue);

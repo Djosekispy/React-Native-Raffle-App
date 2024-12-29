@@ -2,8 +2,6 @@ import ProfileHeader from '@/components/userPage/ProfileHeader';
 import UserInfo from '@/components/userPage/UserInfo';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
-import Button from '@/components/userPage/Button';
-import { Link, router } from 'expo-router';
 import { useAuth } from '@/context';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,53 +11,121 @@ import { schemaUser } from '@/interfaces/user';
 import { UserSchema } from '@/interfaces/user';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
+import * as DocumentPicker from 'expo-document-picker';
+import { api } from '@/utils/api';
+import { isAxiosError } from 'axios';
 
 const EditProfileScreen = () => {
-    const { user , updateUser} = useAuth();
+    const { user, updateUser } = useAuth();
     const [isError, setIsError] = useState('');
-    const router = useRouter();
+    const [editForm, setEditForm ] = useState<number>(1)
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadedDocs, setUploadedDocs] = useState({
+        licenca: null,
+        nif: null,
+        bilhete: null,
+    });
+    const router = useRouter();
+
     const { control, handleSubmit, formState: { errors } } = useForm<UserSchema>({
         defaultValues: { ...user },
         resolver: yupResolver(schemaUser),
     });
 
-    const onSubmit = async (data: UserSchema) => {
+    const onSubmitPersonalData = async (data: UserSchema) => {
         setIsLoading(true);
-    try {
-      const user = await updateUser(data);
-      if('error' in user){
-        setIsError(user.error);
-      }else{
-        router.replace({pathname: '/(user)/profile', params: {sucess : 'Dados actualizados com sucesso!'}});
-      }
-    } catch (error) {
-      console.error(error);
-    }finally{
-      setIsLoading(false);
-    }
+        try {
+            const user = await updateUser(data);
+            if ('error' in user) {
+                setIsError(user.error);
+            } else {
+                router.replace({ pathname: '/(user)/profile', params: { success: 'Dados atualizados com sucesso!' } });
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    const handleFileUpload = async (field: keyof typeof uploadedDocs) => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+            if (!result.canceled) {
+                setUploadedDocs({ ...uploadedDocs, [field]: result.assets[0] });
+            }
+        } catch (error) {
+            Alert.alert('Erro ao carregar o documento', error as string);
+        }
+    };
+
+    const onSubmitDocuments = async () => {
+      setIsUploading(true);
+      const formData = new FormData();
+    
+      if (uploadedDocs.licenca) formData.append('licenca', uploadedDocs.licenca);
+      if (uploadedDocs.nif) formData.append('nif', uploadedDocs.nif);
+      if (uploadedDocs.bilhete) formData.append('bilheteUrl', uploadedDocs.bilhete);
+    
+      // Inspeciona o conteúdo do FormData
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+    
+      try {
+        const response = await api.post('/user/document', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${user?.token_acesso}`,
+          },
+        });
+        console.log(response.data); 
+      } catch (error) {
+        if (isAxiosError(error)) {
+          console.log(JSON.stringify(error.response?.data)); 
+          Alert.alert('Erro', error.response?.data?.error || 'Erro desconhecido.');
+        } else {
+          console.error(error);
+          Alert.alert('Erro', 'Ocorreu um problema ao enviar os documentos.');
+        }
+      } finally {
+        setIsUploading(false);
+      }
+    };
+    
 
     return (
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} alwaysBounceVertical>
-          
-           <View className='p-4 mt-4 flex-row justify-evenly items-center'>
-        <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
-        <Text className='font-bold text-2xl text-black px-12 text-center my-4  py-2 rounded-2xl'>Atualizar dados pessoais</Text>
-      </View>
-    <View className="flex-1 mx-4">
-                <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
-                
-                <View className='my-4'>
+            <View className="p-4 mt-4 flex-row justify-evenly items-center">
+                <Ionicons name="arrow-back" size={25} color="#000" onPress={() => router.back()} />
+                <Text className="font-bold text-2xl text-black px-12 text-center my-4 py-2 rounded-2xl">
+                    Atualizar dados pessoais
+                </Text>
+            </View>
+
+            <ProfileHeader email={user?.email} name={user?.nome_completo} image={user?.foto_perfil} />
+
+            <View className='flex-row gap-4 justify-center items-center my-2'>
+              <TouchableOpacity onPress={()=>setEditForm(1)} className={` p-2 rounded-md  ${editForm === 1 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Dados Pessoais</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=>setEditForm(2)} className={` p-2 rounded-md  ${editForm === 2 ? 'bg-[#FF7F50]' : 'bg-orange-200' }`}>
+                <Text className='text-center'>Documentos de Identificação</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Seção de Dados Pessoais   */}
+         { editForm === 1  &&  <View className="flex-1 mx-4">
+               
+                <View className="my-4">
                     {isError && (
-         <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
-           <Text className="text-red-700 font-medium">
-             {isError}
-           </Text>
-         </View>
-       )}
-                    <View>
+                        <View className="bg-red-100 border border-red-400 rounded-md p-3 mb-4">
+                            <Text className="text-red-700 font-medium">{isError}</Text>
+                        </View>
+                    )}
+
+<View>
           <Text className="text-gray-700 text-sm my-4 font-medium">
             Nome Completo
           </Text>
@@ -149,24 +215,44 @@ const EditProfileScreen = () => {
               placeholder="Seu estado civil"
             />
                 </View>
+                    {/* Outros campos de formulário */}
+
+                    <TouchableOpacity
+                        disabled={isLoading}
+                        className="bg-[#FF7F50] py-3 mt-4 rounded-lg"
+                        onPress={handleSubmit(onSubmitPersonalData)}
+                    >
+                        {isLoading ? <ActivityIndicator size={30} color="#fff" /> : <Text className="text-white text-center font-semibold text-xl">Salvar</Text>}
+                    </TouchableOpacity>
+                </View>
+            </View>}
+
+            {/* Seção de Documentos */}
+            { editForm === 2  && 
+            <View className="flex-1 mx-4 mt-8">
+                <Text className="font-bold text-lg text-black mb-4">Envio de Documentos</Text>
+
+                <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('licenca')}>
+                    <Text className="text-gray-700">{uploadedDocs.licenca ? `Licença: ${(uploadedDocs.licenca as DocumentPicker.DocumentPickerAsset).name}` : 'Carregar Licença'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('nif')}>
+                    <Text className="text-gray-700">{uploadedDocs.nif ? `NIF: ${(uploadedDocs.nif as  DocumentPicker.DocumentPickerAsset).name}` : 'Carregar NIF'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity className="bg-gray-200 py-3 px-4 rounded-lg mb-4" onPress={() => handleFileUpload('bilhete')}>
+                    <Text className="text-gray-700">{uploadedDocs.bilhete ? `Bilhete: ${(uploadedDocs.bilhete as DocumentPicker.DocumentPickerAsset).name}` : 'Carregar Bilhete'}</Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity
-          disabled={isLoading}
-          className="bg-[#FF7F50] py-3 mt-4 rounded-lg hover:bg-blue-700 active:bg-blue-800"
-          accessibilityRole="button"
-          accessibilityLabel="Entrar na conta"
-          onPress={handleSubmit(onSubmit)}
-        >
-       {isLoading ? <ActivityIndicator size={30}  color="#fff" /> : <Text className="text-white text-center font-semibold text-xl">
-            Salvar
-          </Text>}
-        </TouchableOpacity>
+                    disabled={isUploading}
+                    className="bg-[#FF7F50] py-3 mt-4 rounded-lg"
+                    onPress={onSubmitDocuments}
+                >
+                    {isUploading ? <ActivityIndicator size={30} color="#fff" /> : <Text className="text-white text-center font-semibold text-xl">Enviar Documentos</Text>}
+                </TouchableOpacity>
             </View>
-            </View>
-            <View className="flex-1 items-center justify-center bg-gray-200 py-4">
-                <Text className="text-gray-700 text-center">
-                    © 2023 Todos os direitos reservados.
-                </Text>
-            </View>
+}
         </ScrollView>
     );
 };

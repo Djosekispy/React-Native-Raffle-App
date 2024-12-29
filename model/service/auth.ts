@@ -4,6 +4,8 @@ import userRepository from "../UserRepository/userRepository";
 import { api } from "@/utils/api";
 import { isAxiosError } from "axios";
 import * as DocumentPicker from 'expo-document-picker';
+import { IUserWithDoc } from "@/interfaces/IUserWithDoc";
+
 
 class AuthService {
 
@@ -60,7 +62,7 @@ class AuthService {
         }
     }
 
-    getUser = async (): Promise<User | null> => {
+    getUser = async (): Promise<IUserWithDoc | null> => {
         return await this.userRepository.get();
     }
 
@@ -112,9 +114,11 @@ class AuthService {
         }
     }
 
-    update = async (data:UserSchema) : Promise<User | null | { error: string }>=>{
+    update = async (data:UserSchema) : Promise<IUserWithDoc | null | { error: string }>=>{
         try {
-            const request = await api.put('/users/me', data,{
+            
+            console.log("Fazendo A Requisição",JSON.stringify(data))
+            const request = await api.put('/update', data,{
                 headers: {
                     Authorization : `Bearer ${data.token_acesso}`
                 }
@@ -153,6 +157,7 @@ class AuthService {
                     console.log('update Repository',JSON.stringify(updateUser))
                     return { error: updateUser.error as string };
                 }
+                
             return await this.getUser();
         } catch (error) {
             if (isAxiosError(error)) {

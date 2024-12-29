@@ -1,12 +1,13 @@
 import axios from "axios";
 import { api } from "./api";
-
+import { authService } from "@/model/service/auth";
+/*
 export const setupAxiosInterceptors = (): void => {
-  axios.interceptors.response.use(
+  api.interceptors.response.use(
     (response) => {
       return response;
     },
-    (error) => {
+    async (error) => {
       if (
         error.response &&
         error.response.data &&
@@ -14,9 +15,11 @@ export const setupAxiosInterceptors = (): void => {
           error.response.data.message === "Token inválido ou sessão expirada")
       ) {
         console.log('sessão expirada')
-        throw new Error('sessão expirada');
+       /// await authService.logout();
+        //throw new Error('sessão expirada');
       }
       return Promise.reject(error); 
     }
   );
 };
+*/

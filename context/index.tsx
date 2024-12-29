@@ -1,3 +1,4 @@
+import { IUserWithDoc } from '@/interfaces/IUserWithDoc';
 import { User, UserSchema } from '@/interfaces/user';
 import { authService } from '@/model/service/auth';
 import { userService } from '@/model/service/user';
@@ -12,14 +13,14 @@ type AuthContextData = {
   login: (email: string, password: string) => Promise<User | { error : string }>;
   register: (email: string, password: string, nome_completo: string) => Promise<User | { error : string }>;
   logout: () => void;
-  replaceLocalUseData : ()=> Promise<User | { error : string }>;
+  replaceLocalUseData : ()=> Promise<IUserWithDoc | { error : string }>;
   updateUser : (data : UserSchema) => Promise<User | { error : string }>;
 };
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUserWithDoc| User | null>(null);
   const router = useRouter();
 
   const login = async (email: string, password: string) : Promise<User | { error : string }> => {
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const user = await authService.update(data)
      
+    console.log('User', JSON.stringify(user))
       if(user && 'error' in user){
         return { error : user.error}
       }
@@ -75,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-const replaceLocalUseData = async():   Promise<User | { error : string }> =>{
+const replaceLocalUseData = async():   Promise<IUserWithDoc | { error : string }> =>{
   try {
     const user = await userService.updateLocalUserData();
    
@@ -83,7 +85,8 @@ const replaceLocalUseData = async():   Promise<User | { error : string }> =>{
       return { error : user.error}
     }
  const userdata = await  getUser();
- return userdata as User;
+ console.log(JSON.stringify(userdata))
+ return userdata as IUserWithDoc;
   } catch (error) {
     return {error : 'Erro ao logar: ' + error };
   }
