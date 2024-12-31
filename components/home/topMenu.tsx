@@ -3,23 +3,22 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import raffleimage from '../../public/img/raffles.png'
 import { useAuth } from "@/context";
+import { useRouter } from "expo-router";
 const TopMenu = () => {
     const { logout } = useAuth()
+    const router = useRouter()
   return (
     <View style={styles.container}>
-      {/* Logotipo */}
       <View style={styles.logoContainer}>
         <Image
-          source={raffleimage} // Substitua pelo caminho do seu logotipo
+          source={raffleimage}
           style={styles.logo}
           resizeMode="contain"
         />
         <Text style={styles.logoText}>Sorteio App</Text>
       </View>
-
-      {/* Botões de ação */}
       <View style={styles.actionContainer}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={()=>router.push('/(user)/notifications')}>
           <Ionicons name="notifications-outline" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>

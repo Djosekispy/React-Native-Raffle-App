@@ -59,8 +59,8 @@ export default function CreateRaffle() {
           Authorization : `Bearer ${token}`
       }
     });
-    console.log(JSON.stringify(result.data))
-    setRaffle(result.data)
+    console.log(JSON.stringify(result.data.result))
+    setRaffle(result.data.result)
     } catch (error) {
      if(isAxiosError(error)){
       console.log(JSON.stringify(error));
@@ -77,42 +77,35 @@ export default function CreateRaffle() {
 
 
   const onSubmit = async (data: RaffleFormData) => {
-    
-    if(!coverImage) {
-      Alert.alert('Carregamento de Imagem','Por favor selecione uma imagem de capa');
-      return ;
-    }
+
     setIsLoading(true);
     try {
-      // Simulação de envio
-      data.cover = coverImage.uri || '';
-    /*  const formData = new FormData();
-      formData.append('nome', data.nome);
-      formData.append('politicas', data.politicas);
-      formData.append('data_realizacao', data.data_realizacao.toISOString());
-      formData.append('file', {
-        uri: coverImage.uri,
-        type: coverImage.mimeType,
-        name: coverImage.name,
-      } as unknown as Blob);
-*/
-  const token = user?.token_acesso;
-  const result = await api.put('/raffles', data, {
-      headers: {
-         'Content-Type': 'multipart/form-data',
-          Authorization : `Bearer ${token}`
-      }
-    });
+           
+            const formData = new FormData();
+            formData.append('nome', data.nome);
+            formData.append('politicas', data.politicas);
+            formData.append('data_realizacao', data.data_realizacao.toISOString());
+           if(coverImage && coverImage.uri) {
+            data.cover = coverImage.uri || '';
+            formData.append('file', {
+              uri: coverImage.uri,
+              type: coverImage.mimeType,
+              name: coverImage.name,
+            } as unknown as Blob);
+          }
 
-
-    console.log(JSON.stringify(result.data))
-      //router.push({pathname:'/painel/', params: {msg: 'Sorteio criado com sucesso!'}});
+            const token = user?.token_acesso;
+            const result = await api.put(`/raffles/${id}`, data, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                    Authorization : `Bearer ${token}`
+                }
+              });
+        router.push({pathname:'/painel/', params: {msg: 'Sorteio actualizado com sucesso!'}});
     } catch (error) {
      if(isAxiosError(error)){
-      console.log(JSON.stringify(error));
       Alert.alert('Erro ao criar sorteio', error.response?.data.error);
      }else{
-      console.error(error);
       Alert.alert('Erro ao criar sorteio', 'Tente novamente mais tarde');
      }
     } finally {
@@ -149,43 +142,37 @@ export default function CreateRaffle() {
 
   return (
     <ScrollView className="flex-1 bg-white px-6 py-8">
-      {/* Cabeçalho */}
       <View className="mb-8 pt-4">
       <View className='flex-row justify-start gap-12 items-center'>
             <Ionicons name='arrow-back' size={25} color={"#000"}  onPress={()=>router.back()}/>
         <Text className="text-3xl font-bold text-gray-800 mb-2">Editar Sorteio</Text>
              </View>
-        <Text className="text-base text-gray-600">Preencha as informações abaixo para Editar seu sorteio.</Text>
+        <Text className="text-base text-gray-600">Preencha as informações abaixo para Editar seu sorteio.
+        </Text>
       </View>
 
-      {/* Formulário */}
       <View className="space-y-4 gap-4 mb-12">
-        {/* Nome */}
         <View>
           <Text className="text-gray-700 text-sm font-medium mb-2">Nome do Sorteio</Text>
           <FormInput
             control={control}
             name="nome"
-            placeholder="Digite o nome do sorteio"
+            placeholder={raffle?.nome as string}
             error={errors.nome?.message}
             icon={''}
           />
         </View>
-
-        {/* URL da Capa */}
         <View>
           <Text className="text-gray-700 text-sm font-medium mb-2">Capa do Sorteio</Text>
           <TouchableOpacity onPress={pickImage} className="bg-gray-200 py-3 rounded-lg">
             <Text className="text-gray-700 text-center">Escolher Imagem</Text>
           </TouchableOpacity>
-          {coverImage && <Image source={{ uri: coverImage.uri }} style={{ width: 100, height: 100, marginTop: 10 }} />}
+          {raffle?.cover && <Image source={{ uri: raffle?.cover ? raffle?.cover : coverImage?.uri  }} style={{ width: 100, height: 100, marginTop: 10 }} />}
         </View>
-
-        {/* Data de Realização */}
         <View>
           <Text className="text-gray-700 text-sm font-medium mb-2">Data de Realização</Text>
           <TouchableOpacity onPress={showDatepicker} className="border border-gray-300 p-3 rounded-lg">
-            <Text className="text-gray-700">{selectedDate.toLocaleDateString()}</Text>
+            <Text className="text-gray-700">{ raffle?.data_realizacao ? String(raffle?.data_realizacao) : selectedDate.toLocaleDateString() }</Text>
           </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
@@ -199,20 +186,18 @@ export default function CreateRaffle() {
           {errors.data_realizacao?.message && <Text className="text-red-500 text-sm">{errors.data_realizacao.message}</Text>}
         </View>
 
-        {/* Políticas */}
         <View>
           <Text className="text-gray-700 text-sm font-medium mb-2">Políticas do Sorteio</Text>
           <FormInput
             control={control}
             name="politicas"
             multiline={true}
-            placeholder="Descreva as políticas do sorteio"
+            placeholder={raffle?.politicas as string}
             error={errors.politicas?.message}
             icon='info-circle'
           />
         </View>
 
-        {/* Botão de envio */}
         <TouchableOpacity
           disabled={isLoading}
           className="bg-blue-500 py-3 mt-6 rounded-lg hover:bg-blue-600 active:bg-blue-700"
@@ -221,7 +206,7 @@ export default function CreateRaffle() {
           {isLoading ? (
             <ActivityIndicator size={24} color="#fff" />
           ) : (
-            <Text className="text-white text-center font-semibold text-lg">Criar Sorteio</Text>
+            <Text className="text-white text-center font-semibold text-lg">Actualizar Sorteio</Text>
           )}
         </TouchableOpacity>
       </View>

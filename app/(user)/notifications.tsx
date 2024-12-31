@@ -6,48 +6,6 @@ import { api } from "@/utils/api";
 import { isAxiosError } from "axios";
 import { Ionicons } from "@expo/vector-icons";
 
-const notificationsMock: NotificationDTO[] = [
-    {
-      id: 1,
-      usuarioId: 101,
-      title: "Nova Atualização Disponível",
-      message: "A versão 2.0 do aplicativo foi lançada com melhorias de desempenho e novos recursos.",
-      status: "pendente",
-      createdAt: new Date("2024-12-29T10:30:00"),
-    },
-    {
-      id: 2,
-      usuarioId: 102,
-      title: "Sorteio Concluído",
-      message: "O sorteio 'Casa dos Sonhos' foi encerrado com sucesso. Verifique os vencedores!",
-      status: "lido",
-      createdAt: new Date("2024-12-28T16:45:00"),
-    },
-    {
-      id: 3,
-      usuarioId: 103,
-      title: "Erro no Sistema",
-      message: "Houve um erro ao processar sua inscrição no sorteio. Por favor, tente novamente.",
-      status: "pendente",
-      createdAt: new Date("2024-12-27T08:15:00"),
-    },
-    {
-      id: 4,
-      usuarioId: 104,
-      title: "Novo Sorteio Aberto",
-      message: "Um novo sorteio foi aberto! Participe e concorra a prêmios incríveis.",
-      status: "pendente",
-      createdAt: new Date("2024-12-25T14:00:00"),
-    },
-    {
-      id: 5,
-      usuarioId: 105,
-      title: "Manutenção Programada",
-      message: "A manutenção do sistema será realizada na madrugada de amanhã. Fique atento às atualizações.",
-      status: "lido",
-      createdAt: new Date("2024-12-20T18:00:00"),
-    },
-  ];
   
 type NotificationDTO = {
   id?: number;
@@ -62,7 +20,7 @@ type NotificationDTO = {
 const NotificationList: React.FC = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<NotificationDTO[]>(notificationsMock);
+  const [notifications, setNotifications] = useState<NotificationDTO[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const getNotifications = async () => {
@@ -74,7 +32,7 @@ const NotificationList: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      //setNotifications(response.data);  // Assuming the response is an array of NotificationDTO
+      setNotifications(response.data.notifications);  
     } catch (error) {
       if (isAxiosError(error)) {
         Alert.alert("Erro ao carregar notificações", "Ops! Algo deu errado.");
@@ -92,14 +50,10 @@ const NotificationList: React.FC = () => {
 
   const renderNotificationIcon = (status: string) => {
     switch (status) {
-      case "info":
+      case "pendente":
         return <Ionicons name="information-circle" size={24} color="#007BFF" />;
-      case "success":
+      case "lido":
         return <Ionicons name="checkmark-circle" size={24} color="#28A745" />;
-      case "warning":
-        return <Ionicons name="alert-circle" size={24} color="#FFC107" />;
-      case "error":
-        return <Ionicons name="close-circle" size={24} color="#DC3545" />;
       default:
         return <Ionicons name="notifications" size={24} color="#6C757D" />;
     }
@@ -121,7 +75,7 @@ const NotificationList: React.FC = () => {
           >
             <View className="mr-4">{renderNotificationIcon(item.status || "info")}</View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-800">{item.title}</Text>
+              <Text className="text-md font-semibold text-gray-800">{item.title}</Text>
               <Text className="text-sm text-gray-600">{item.message}</Text>
               <Text className="text-xs text-gray-500 mt-1">{new Date(item.createdAt || "").toLocaleString()}</Text>
             </View>
